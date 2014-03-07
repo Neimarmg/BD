@@ -1,0 +1,445 @@
+
+15 TRABALHO FINAL Seguradora 2013 02
+
+--====================================================================
+CREATE TABLE produtos (
+	idProduto serial primary key,	
+	descProduto varChar(100) not null,
+	idSegmento integer not null,	
+	validade integer not null, -- total de dias que é valido
+	status BOOLEAN, -- Produto ativo 'Sim/Não'
+	
+	CHECK(
+		idSegmento > 0 and
+		),
+	FOREIGN KEY (idSegmento) REFERENCES utilitarios(idUtilitarios)
+)
+
+SELECT * produtos;
+
+INSERT INTO ?
+(idProduto, descProduto, idSegmento, validade, status) Values 
+(1, 'Seguro contra roubo', 9, '10-02-2013', sim);
+(2, 'Seguro Contra acidente', 10, '10-03-2013', sim);
+(3, 'Seguro contra incendio', 11, '11-02-2013', sim);
+(4, 'seguro danos alagamentos', 19, '19-05-2014', sim);
+(5, 'seguro oficina', 19, '01-08-2014', sim);
+
+
+--====================================================================
+CREATE TABLE especificaProdudo (
+	idEspecificaProduto serial primary key,	
+	idProduto integer not null,
+	idCobertura integer not null,
+	valorFranquia double(10,00) null,
+	valorProduto double(10,00) not null,	
+	status BOOLEAN, -- ativa 'Sim/Não'
+	CHECK(
+		idCobertura >  and
+		idProduto > 0
+		),
+	FOREIGN KEY (idProdutos) REFERENCES produtos(idProduto)
+)
+--+++++++++++++++++++++++++++++++
+SELECT * especificaProdudo;
+
+INSERT INTO ?
+(idEspecificaProduto, idProduto, idCobertura, valorFranquia, valorProduto, status) Values 
+(1, 1, 12, 100, 1000, sim);
+(2, 2, 12, 200, 1000, sim);
+(3, 3, 12, 400, 1000, sim);
+(4, 4, 12, 500, 1000, sim);
+(5, 5, 12, 200, 1000, sim);
+
+--====================================================================
+CREATE TABLE riscos (
+	idRiscos serial primary key,	
+	idCidade integer not null,
+	idEspecificaProduto integer not null
+	acrescimo double (10,00) null,	
+	desconto double (10,00) null,
+	status BOOLEAN, -- ativo 'Sim/Não'
+	CHECK(
+		idCidade >  and
+		idEspecificaProduto > 0
+		),
+	FOREIGN KEY (id) REFERENCES ()
+)
+--+++++++++++++++++++++++++++++++
+SELECT * riscos;
+
+INSERT INTO ?
+(idRiscos, idCidade, idEspecificaProduto, acrescimo, desconto, status) Values 
+(1, 1, 1, 100, 00, Sim);
+(2, 2, 1, 500, 00, Sim);
+(3, 3, 1, 122, 00, Sim);
+--====================================================================
+CREATE TABLE pessoas (
+	idPessoa serial PRIMARY KEY, 
+	nomePessoa VARCHAR(100) NOT NULL, 
+	sexo VARCHAR(1) NOT NULL, -- F = Femenino, M = Mascolino 
+	idEstadoCivil integer null, 
+	dataNasc data null,
+	idAreaAtuacao integer not null,
+	tipoPessoa VARCHAR(1) NOT NULL, -- J = Juridica, F = Fisica	
+	rg varChar (20) null,
+	cpf varChar (20) null,
+	ie varChar (20) null,
+	cnpj varChar (20) null,	
+	ct varChar (20) null,
+	cnh varChar (20) null,
+	status BOOLEAN, -- Pessoa ativo 'Sim/Não'
+	
+	CHECK(						
+		tipoPessoa <> "" and
+		(tipoPessoa = "J" and (cnpj <> "" or ie <> "") and ct = "") and
+		(tipoPessoa = "F" and (rg <> "" or cpf <> ""))
+	),	
+	FOREIGN KEY (idEstadoCivil) REFERENCES utilitarios(idUtilitarios),
+	FOREIGN KEY (idAreaAtuacao) REFERENCES utilitarios(idUtilitarios)
+)
+
+--+++++++++++++++++++++++++++++++
+SELECT * pessoas;
+
+INSERT INTO pessoas
+(idPessoa, nomePessoa, sexo, idEstadoCivil, dataNasc, idAreaAtuacao,  tipoPessoa, rg, cpf, ie, cnpj, ct, cnh, status) Values 
+(1,'Morise noss', '', , '15-10-2013', 17, 'J', '1000556615', '', '','2324-000010/22', '', '', sim);
+(2,'Noberto canta', , ,'18-10-2013', 17, 'J', '', '', '1256645-56','', '', '', sim);
+(3,'Pedro joco', 'M', 15, '15-12-2013', 18, 'F', '', '275658998-21', '','', '1241124212', '1244112154', sim);
+(4,'Lica Santana', 'F', 16, '15-11-2013', 18, 'F', '', '235654988-45', '','', '23114521422', '1215451215', sim);
+(5,'Menus siltes', 'M', 15, '19-08-2013', 18, 'F', '2345895678', '', '','', '15544612245', '', sim);
+
+--====================================================================
+CREATE TABLE enderecos (
+	idEnderco serial PRIMARY KEY, 
+	idPessoa integer not null REFERENCES filmes ON DELETE CASCADE,
+	rua VARCHAR(100) not null,
+	nro VARCHAR(10) not null,
+	compl VARCHAR(15) not null,
+	bairro VARCHAR(30) not null,
+	idCidade integer not null,
+	cep VARCHAR(10) not null,	
+	idTipoEndereco integer not null,
+	status BOOLEAN, -- ativo 'Sim/Não'
+	
+	CHECK(						
+		idCidade > 0 and
+		idTipoEndereco > 0 
+	),	
+	FOREIGN KEY (idPessoa) REFERENCES pessoas(idPessoa),
+	FOREIGN KEY (idTipoEndereco) REFERENCES utilitarios(idUtilitarios),
+	FOREIGN KEY (idCidade) REFERENCES cidades(idCidade)
+)
+
+--+++++++++++++++++++++++++++++++
+SELECT * enderecos;
+
+INSERT INTO enderecos
+(idEnderco, idPessoa, rua, nro, compl, bairro, idCidade, cep, idTipoEndereco,status ) Values 
+(1,	1,'Saltos','52','4','Saltos', 1,'46545-45',7,sim);
+(2,	2,'Durmaul','45','45','Salso', 5,'46578-55', 7,sim);
+(3,	3,'Ze durval','11','4','Cascatinha', 4,'46575-40', 8,sim);
+(4,	4,'Drovbot','12','65','Jardins', 4,'89545-48', 8,sim);
+(5,	5,'Salto Alto','96','Livramento','1124', 1,'46589-45', 8,sim);
+
+--====================================================================
+CREATE TABLE modalidadePessoa (
+	idModalidadePessoa serial primary key,	
+	idPessoa integer not null REFERENCES filmes ON DELETE CASCADE,
+	idTipoModalidade integer not null,
+	idCargo integer not null,
+	idSubordinado integer null,
+	status BOOLEAN, -- ativo 'Sim/Não'
+	
+	CHECK(						
+		idPessoa > 0 AND
+		idCategoriaPessoa > 0
+	),	
+	FOREIGN KEY () REFERENCES utilitarios(idUtilitarios),
+	FOREIGN KEY (idCategoriaPessoa) REFERENCES utilitarios(idUtilitarios),
+	FOREIGN KEY (idCargo) REFERENCES utilitarios(idUtilitarios),
+	FOREIGN KEY (idSubordinado) REFERENCES pessoas(idPessoa)
+)
+
+--+++++++++++++++++++++++++++++++
+SELECT * modalidadePessoa;
+
+INSERT INTO modalidadePessoa
+(idModalidadePessoa, idPessoa, idTipoModalidade, idCargo, idSubordinado, status) Values 
+(1, 1, 2, 6, 3,sim);
+(2, 2, 2, 6, 3,sim);
+(3, 3, 1, 3, 4,sim);
+(4, 4, 1, 4, 4,sim);
+(5, 5, 1, 5, 6,sim);
+
+--====================================================================
+CREATE TABLE veiculos (
+	idVeiculo serial primary key,	
+	descVeiculo varChar(10) not null,
+	idMarca integer not null,
+	placa varChar(7) not null,
+	cor varChar (20) null,
+	modelo varChar (20) null,
+	idProprietario integer not null,	
+	status BOOLEAN, -- ativo 'Sim/Não'
+	
+	CHECK(
+		idMarca >  0 and
+		idProprietario > 0 
+		),
+	FOREIGN KEY (idMarca) REFERENCES utilitarios(idUtilitarios),
+	FOREIGN KEY (idProprietario) REFERENCES utilitarios(idUtilitarios)	
+)
+--+++++++++++++++++++++++++++++++
+SELECT * veiculos ?;
+
+INSERT INTO ?
+(id) Values 
+(1,);
+
+--====================================================================
+CREATE TABLE contratos (  
+	idContrato serial PRIMARY KEY,
+	idCliente integer not null REFERENCES pessoas ON DELETE RESTRICT,
+	idEnderco integer not null,
+	idTipoContrato integer not null,
+	idVeiculo integer not null,
+	clausulas text not null,
+	dataEmissãoContrato date not null DEFAULT(CURRENT_DATE),
+	firmadoContratoData date not null DEFAULT(CURRENT_DATE),
+	finalizadoContratoData date not null DEFAULT(CURRENT_DATE),
+	obsContrato text null, 	
+	decontoMinimo decimal (10,2) null,
+	decontoMaximo decimal (10,2) null,
+	idEstatusContrato integer not null, -- Liquidado,Vigente,em negociação, suspenço
+	CHECK(
+		idCliente > 0 and
+		idEnderco > 0 and
+		idVeiculo > 0 and
+		idTipoContrato > 0 and
+		(firmadoContratoData < finalizadoContratoData)	
+	),
+	FOREIGN KEY(idCliente) REFERENCES pessoas(idPessoa),
+	FOREIGN KEY(idEnderco) REFERENCES enderecos(idEnderco),
+	FOREIGN KEY(idVeiculo) REFERENCES veiculo(idVeiculo),
+	FOREIGN KEY(idTipoContrato) REFERENCES utilitarios(idUtilitarios),
+	FOREIGN KEY(idEstatusContrato) REFERENCES utilitarios(idUtilitarios)
+
+--+++++++++++++++++++++++++++++++
+SELECT * contratos;
+
+INSERT INTO ?
+(id) Values 
+(1,);
+
+--====================================================================
+CREATE TABLE vistorias (
+	id serial primary key,	
+	idAtendimento integer not null,
+	idPessoa integer not null,
+	obs varChar (255) not null,
+	idStatuVistoria  INTEGER not null,
+	status BOOLEAN, -- ativo 'Sim/Não'
+	CHECK(
+		idStatuVistoria > 0 
+		),
+	FOREIGN KEY (idStatuVistoria) REFERENCES utilitarios(idUtilitarios)
+)
+--+++++++++++++++++++++++++++++++
+SELECT * vistorias;
+
+INSERT INTO ?
+(id) Values 
+(1,);
+
+--====================================================================
+CREATE TABLE atendimento (
+	idAtendimento serial primary key,	
+	idPessoa integer not null,
+	idEnderco integer not null,
+	detaAtendimento date not null,
+	dataVisita date not null,	
+	status BOOLEAN, -- ativo 'Sim/Não'
+	
+	CHECK(
+		idPessoa > 0 and
+		idEnderco > 0 
+		),
+	FOREIGN KEY (idPessoa) REFERENCES pessoas(idPessoa),
+	FOREIGN KEY (idEnderco) REFERENCES enderecos(idEnderco)
+)
+--+++++++++++++++++++++++++++++++
+SELECT * atendimento?;
+
+INSERT INTO ?
+(id) Values 
+(1,);
+
+SELECT FROM 
+atendimento.idAtendimento,
+atendimento.idCliente,
+atendimento.idPessoa,
+pessoas.nomePessoa,
+
+enderecos.cep,
+enderecos.nro,
+cidades.nomeCidade,
+cidades.uf,
+atendimento.detaAtendimento,
+	FROM (( atendimento INNER JOIN pessoas ON atendimento.idPessoa = pessoas.idPessoa)
+		INNER JOIN atendimento INNER JOIN enderecos ON atendimento.idEnderco = enderecos.idEnderco) 
+		INNER JOIN atendimento ( pessoas INNER JOIN cidades ON pessoas.idCidade = cidades.idCidade) ON atendimento.idCliente = pessoas.idPessoa
+	
+	WHERE(cidades.uf = 'RS');
+	
+--====================================================================
+CREATE TABLE solicitacaoViagem (
+	idSolicitaViagem serial primary key,	
+	idCidade integer not null,
+	idRepresentante integer not null,
+	idGerente integer not null,
+	idTeseureiro integer not null,
+	idTipoViajem integer not null,
+	idVeiculo integer null,	
+	valorDiaria double (10,2) not null,
+	status BOOLEAN, -- ativo 'Sim/Não'
+	
+	CHECK(
+		idRepresentante > 0 and
+		idGerente > 0 and
+		idTeseureiro  > 0 and
+		idTipoViajem  > 0 and
+		),
+	FOREIGN KEY (idCidade) REFERENCES cidades(idCidade),	
+	FOREIGN KEY (idTipoViajem) REFERENCES utilitarios(idUtilitarios),
+	FOREIGN KEY (idRepresentante) REFERENCES modalidadePessoa(idModalidadePessoa),
+	FOREIGN KEY (idGerente) REFERENCES modalidadePessoa(idModalidadePessoa)
+)
+--+++++++++++++++++++++++++++++++
+SELECT * solicitacaoViagem;
+
+INSERT INTO ?
+(id) Values 
+(1,);
+
+--====================================================================
+CREATE TABLE viagem (
+	idViagem serial primary key,	
+	idSolicitaViagem integer not null,	
+	valorAdintamento double (10,2) nor null,
+	dataSaida date not null,
+	dataRetorno date not null,	
+	status BOOLEAN, -- ativo 'Sim/Não'
+	
+	CHECK(
+		idSolicitaViagem > 0
+		),
+	FOREIGN KEY (id) REFERENCES ()
+)
+--+++++++++++++++++++++++++++++++
+SELECT * viagem;
+
+INSERT INTO ?
+(id) Values 
+(1,);
+
+--=================================================================
+CREATE TABLE cidades (
+	idCidade serial primary key,	
+	nomeCidade varChar (200) not null,
+	idUf integer not null,
+	estado VarChar (100) not null,
+	pais varChar (50) not null
+)
+--+++++++++++++++++++++++++++++++
+SELECT * cidades
+
+INSERT INTO cidades
+(idCidade, nomeCidade , uf , estado , pais) Values 
+(1, 'Porto alegre' , 'rs' , 'rio grande do sul' , 'Brasil');
+(2, 'Canoas' , 'rs' , 'rio grande do sul' , 'Brasil');
+(3, 'Viamão' , 'rs' , 'rio grande do sul' , 'Brasil');
+(4, 'Ouro Preto' , 'sp' , 'Sao Paulo' , 'Brasil');
+(5, 'Taquara' , 'rs' , 'rio grande do sul' , 'Brasil');
+
+--====================================================================
+CREATE TABLE tipoUtilitarios (
+	idTipoUtilitario serial primary key,
+	nomeTipoUtilitario varChar(100) not null
+)
+--+++++++++++++++++++++++++++++++
+INSERT INTO tipoUtilitarios 
+(idTipoUtilitario, nomeTipoUtilitario) VALUE 
+(1, 'Categoria pessoa');
+(2, 'Cargos');
+(3, 'Tipo enderecos');
+(4, 'Seguimento de seguro');
+(5, 'Cobertura seguro');
+(6, 'Estado civil');
+(7, 'Area de atuação');
+(8, 'Marca de veiculos');
+(9, 'Proriedade veiculo');
+(10, 'Tipo de viajem');
+(11, 'Status vistorioa');
+(12, '');
+(13, '');
+(14, '');
+(15, '');
+(16, '');
+(17, '');
+(18, '');
+(19, '');
+(20, '');
+
+--====================================================================
+CREATE TABLE utilitarios (
+	idUtilitarios serial primary key,	
+	nomeUtilitario varChar (100) not null,
+	idTipoUtilitario integer not null,
+	CHECK(
+		idTipoUtilitario > 0
+		),
+	FOREIGN key (idUtilitarios) REFERENCES tipoUtilitarios(idTipoUtilitario)
+)
+--+++++++++++++++++++++++++++++++
+SELECT * utilitarios;
+
+INSERT INTO utilitarios
+(idUtilitarios, nomeUtilitario, idTipoUtilitario)VALUE
+(1, 'Colaborador', 1);
+(2, 'Cliente', 1);
+(3, 'Gerente', 2);
+(4, 'Tesoureiro', 2);
+(5, 'Representante', 2);
+(6, 'Segurado', 2);
+(7, 'Comercial', 3);
+(8, 'Residencial', 3);
+(9, 'Roubo veiculo', 4);
+(10, 'Acidentes ', 4);
+(11, 'Contro incendio', 4);
+(12, 'Total', 5);
+(13, 'Parcial', 5);
+(14, 'Minima', 5);
+(15, 'Soteiro', 6);
+(16, 'Casado', 6);
+(17, 'Transporte', 7);
+(18, 'Presatação de serviços', 7);
+(19, 'Alagamentos', 4);
+(20, 'Honda', 8);
+(21, 'Volkswagen', 8);
+(22, 'Fiat', 8);
+(23, 'Cliente', 9);
+(24, 'Empresa', 9);
+(25, 'Veiculo próprio', 10);
+(26, 'Veiculo da empresa', 10);
+(27, 'Onibus', 10);
+(28, 'Do representente', 9);
+(29, 'Regular ', 11);
+(30, 'Irregular ', 11);
+(31, '', );
+(32, '', );
+(33, '', );
+(34, '', );
+(35, '', );
+

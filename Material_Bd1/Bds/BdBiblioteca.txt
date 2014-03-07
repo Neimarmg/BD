@@ -1,0 +1,260 @@
+CREATE TABLE tipoUtilitarios (
+	idTipoUtilitario serial primary key,
+	nomeTipoUtilitario varChar(100) not null
+)
+
+CREATE TABLE utilitarios (
+	idUtilitarios serial primary key,	
+	nomeUtilitario varChar (100) not null,
+	idTipoUtilitario integer not null,
+	CHECK(
+		idTipoUtilitario > 0
+		),
+	FOREIGN key (idUtilitarios) REFERENCES tipoUtilitarios(idTipoUtilitario)
+)
+
+CREATE TABLE cidades (
+	idCidade serial primary key,	
+	nomeCidade varChar (200) not null,
+	uf varChar (2) not null,
+	estado VarChar (100) not null,
+	pais varChar (50) not null
+)
+CREATE TABLE instituicaoEnsino (
+	idInstituicao serial primary key,
+	nomeInstituicao varChar (200) not null,
+	endereco varChar (200) not null,
+	idCidade integer null,
+	fone varChar (15) null,
+	CHECK(
+		idCidade > 0
+		),
+	FOREIGN key (idCidade) REFERENCES cidades(idCidade)
+)
+CREATE TABLE colaboradores ( --Tabela de cadastro de bibliotecarios 
+	idColaborador serial primary key,
+	idTipoColaborador integer not null,
+	idCargo integer not null, 
+	idInstituicao integer not null,
+	nomeColaborador varChar (200) not null,
+	cpf varChar (15) UNIQUE,
+	crm varChar(10) null,
+	endereco varChar(200) null,
+	idCidade integer null,
+	CHECK(
+		idTipoColaborador > 0 and
+		idCidade > 0 and
+		idCargo > 0 and
+		idInstituicao > 0 
+		),	
+	FOREIGN key (idTipoColaborador) REFERENCES utilitarios(idUtilitarios),
+	FOREIGN key (idCargo) REFERENCES utilitarios(idUtilitarios),
+	FOREIGN key (idCidade) REFERENCES cidades(idCidade),
+	FOREIGN key (idInstituicao) REFERENCES instituicaoEnsino(idInstituicao)
+)
+
+CREATE TABLE escalaOraganizacao ( --Tabela de registros de escala oraganização das instantes
+	idEscalaOraganizacao serial primary key,	
+	idEstagiario integer not null,
+	idBibliotecario integer not null,
+	idInstante integer not null,
+	idCompartimentosInstantes integer not null,
+	nroDias integer not null, -- Periodo de oraganização obrigatória das instantes
+	CHECK(
+		idEstagiario > 0 and
+		idBibliotecario > 0 and
+		idInstante > 0 and
+		idCompartimentosInstantes > 0 and
+		nroDias > 0
+		),
+	FOREIGN key (idEstagiario) REFERENCES colaboradores(idColaborador),
+	FOREIGN key (idBibliotecario) REFERENCES colaboradores(idColaborador),
+	FOREIGN key (idInstante) REFERENCES instantes(idInstante),
+	FOREIGN key (idCompartimentosInstantes) REFERENCES compartimemtosInstantes(idCompartimentosInstantes)
+)
+
+CREATE TABLE registrosOrganizacao ( -- Tabela de registros das datas que as instantes foram organizadas
+	idregistroOrganizacao serial primary key,
+	idEscalaOraganizacao integer not null,
+	dataOganizacao date not null,
+	idExemplarEstraviado null, 
+	CHECK(
+		idEscalaOraganizacao > 0
+		),
+	FOREIGN key (idEscalaOraganizacao) REFERENCES escalaOraganizacao(idEscalaOraganizacao)
+)
+
+CREATE TABLE autores (
+	idAutor serial primary key,
+	idTipoAutor integer not null,
+	nomeAutor varChar (200) not null,
+	cpf varChar (15) UNIQUE,
+	endereco varChar(200) null,
+	idCidade integer null,
+	CHECK(
+		idTipoColaborador > 0 and
+		idCidade > 0 and
+		idUnidade > 0 and
+		idCargo > 0 
+		),	
+	FOREIGN key (idA) REFERENCES utilitarios(idUtilitarios),
+	FOREIGN key (idCidade) REFERENCES cidades(idCidade)
+)
+
+CREATE TABLE bibliotecas (
+	idBiblioteca serial primary key,	
+	nomeBiblioteca varChar(200) not null,
+	nroAndar integer not null,
+	endereco varChar(200) not null,	
+	idCidade integer not null,
+	CHECK(
+		idCidade > 0
+		),
+	FOREIGN key (idCidade) REFERENCES cidades(idCidade),
+)
+
+CREATE TABLE instantes (
+	idInstante serial primary key,
+	idBiblioteca integer not null,
+	idAlaLocalizacao integer not null,
+	qtCompartimentos numeric not null,	
+	alturaInstante decimal not null,
+	comprimentoInstante decimal not null,
+	laguraInstante decimal not null,
+	CHECK(
+		 idBiblioteca> 0 and
+		 idAlaLocalizacao > 0 
+		),
+	FOREIGN key (idBiblioteca) REFERENCES bibliotecas(idBiblioteca),
+	FOREIGN key (idAlaLocalizacao) REFERENCES utilitarios(idUtilitarios)
+)
+
+CREATE TABLE compartimemtosInstantes (
+	idCompartimentosInstantes serial primary key,	
+	idInstante integer nut null,
+	idAssunto integer not null,		
+	qtCompartimento integer not null,
+	tamanhoCompartimento decimal not null,
+
+	CHECK(
+		idAssunto > 0 and
+		idInstante > 0	
+		),
+	FOREIGN key (idAssunto) REFERENCES utilitarios(idUtilitarios),
+	FOREIGN key (idInstante) REFERENCES instantes(idInstante)
+)
+
+CREATE TABLE edicoes (
+	idEdicao serial primary key,
+	edicao varChar (5) nut null,	
+)
+
+CREATE TABLE editoras (
+	idEditora serial primary key,
+	nomeEditora varChar(50) not null,
+	idTipoEditora integer not null,
+	endereco varChar(50) not null,
+	idCidade integer not null,
+	CHECK(
+		idEditora > 0 and
+		idCidade > 0 
+		),
+	FOREIGN key (idTipoEditora) REFERENCES utilitarios(idUtilitarios),
+	FOREIGN key (idCidade) REFERENCES cidades(idCidade)
+)
+
+CREATE TABLE livros (
+	idLivro serial primary key,
+	titulo varChar (200) not null,
+	idTipoLivro integer not null,
+	idEditora integer not null,
+	idEdicao integer not null,
+	idAutor integer not null,
+	idMateria integer not null,
+	idCategoria  integer not null,
+	nroPaginas integer not null,
+	isbn varChar(20) UNIQUE,
+	CHECK(
+		idTipoLivro > 0 and
+		idEditora > 0 and
+		idEdicao > 0 and
+		idAutor > 0 and
+		idMateria > 0
+		),
+	FOREIGN key (idTipoLivro) REFERENCES utilitarios(idTipoUtilitario),
+	FOREIGN key (idEditora) REFERENCES editoras(idEditora),
+	FOREIGN key (edicao) REFERENCES edicoes(idEdicao),
+	FOREIGN key (idAutor) REFERENCES idAutor(idAutor),
+	FOREIGN key (idMateria) REFERENCES utilitarios(idUtilitarios),
+	FOREIGN key (idCategoria) REFERENCES utilitarios(idUtilitarios)
+)
+
+CREATE TABLE exemplaresLivros (
+	idIdExemplarLivro serial primary key,	
+	idLivro integer not null,	
+	idInstante integer not null,
+	idCompartimentosInstantes integer not null,
+	dataRegistro date DEFAULT (CURRENT_DATE),
+	CHECK(
+		idLivro > 0 and
+		idInstante > 0 and
+		idCompartimentosInstantes > 0 	
+		),
+	FOREIGN key (idLivro) REFERENCES livros(idLivro),
+	FOREIGN key (idInstante) REFERENCES instantes(idInstante),
+	FOREIGN key (idCompartimentosInstantes) REFERENCES compartimemtosInstantes(idCompartimentosInstantes)
+)
+
+CREATE TABLE clientes (
+	idCliente serial primary key,
+	idTipoClientes integer not null,
+	nomeColaborador varChar (200) not null,
+	cpf varChar (15) UNIQUE,
+	crm varChar(10) null,
+	endereco varChar(200) null,
+	idCidade integer null,
+	CHECK(
+		idCliente > 0 and
+		idCidade > 0 and
+		),	
+	FOREIGN key (idTipoClientes) REFERENCES utilitarios(idUtilitarios),
+	FOREIGN key (idCidade) REFERENCES cidades(idCidade)
+)
+CREATE TABLE multasAtrazos (
+	idMultaAtrazo serial primary key,	
+	valorMulta DOUBLE not null,
+	statusMulta boolean -- 0 = Inativa, 1=Ativa 
+	dataRegistro date DEFAULT = date(),
+)
+
+CREATE TABLE emprestimos (
+	idEmprestimo serial primary key,	
+	idCliente integer not null,
+	idIdExemplarLivro integer not null,
+	idMultaAtrazo integer not null,
+	dataEprestimo date  not null DEFAULT = date(),
+	dataDevolucao date not null,
+	estatusEmprestimo boolean -- 0 = devolvido, 1= emprestado 
+	CHECK(
+		idCliente > 0 and
+		idIdExemplarLivro > 0 and
+		dataEprestimo > date() and
+		dataDevolucao >= dataEprestimo and
+		idMultaAtrazo > 0 		
+		),
+	FOREIGN key (idCliente) REFERENCES clientes(idCliente),
+	FOREIGN key (idIdExemplarLivro) REFERENCES exemplaresLivros(idIdExemplarLivro),
+	FOREIGN key (idMultaAtrazo) REFERENCES multasAtrazos(idMultaAtrazo)
+)
+
+CREATE TABLE pagamentosMultas (
+	idPagamentosMultas serial primary key,
+	idEmprestimo integer not null,
+	dataPagamemto date not null,
+	statusPagamento boolean -- 0 = Pago, 1= em Aberto 
+	CHECK(
+		 idEmprestimo > 0
+	),
+	FOREIGN key (idEmprestimo) REFERENCES emprestimos(idEmprestimo)
+)
+

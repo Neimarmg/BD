@@ -1,0 +1,9 @@
+﻿
+/*""""""""""""""""""""""""""""""""""""""""""""""""""""""""*/
+CREATE TABLE tipo (
+id_tipo SERIAL PRIMARY KEY,
+tipo varchar(100)
+)
+
+INSERT INTO tipo	
+

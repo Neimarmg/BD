@@ -1,0 +1,165 @@
+CREATE TABLE "public"."cidade" (
+"codigo_cidade" SERIAL, 
+"nome_cidade" VARCHAR(50), 
+"codigo_subregiao" INTEGER, 
+CONSTRAINT "cidade_pkey" PRIMARY KEY("codigo_cidade")
+) WITH OIDS;
+--Tabela subregiao 
+CREATE TABLE "public"."subregiao" (
+"codigo_subregiao" SERIAL, 
+"nome_subregiao" VARCHAR(50), 
+"codigo_pais" INTEGER, 
+CONSTRAINT "subregiao_pkey" PRIMARY KEY("codigo_subregiao")
+) WITH OIDS;
+--Tabela país
+CREATE TABLE "public"."pais" (
+"codigo_pais" SERIAL, 
+"nome_pais" VARCHAR(50), 
+CONSTRAINT "pais_pkey" PRIMARY KEY("codigo_pais")
+) WITH OIDS;
+
+
+INSERT INTO pais (nome_pais) VALUES ('Brasil');
+INSERT INTO pais (nome_pais) VALUES ('Argentina');
+INSERT INTO pais (nome_pais) VALUES ('Estados Unidos');
+INSERT INTO pais (nome_pais) VALUES ('Italia');
+INSERT INTO pais (nome_pais) VALUES ('Franca');
+INSERT INTO pais (nome_pais) VALUES ('Mexico');
+INSERT INTO subregiao ( nome_subregiao, codigo_pais) VALUES ( 'Parana', 1);
+
+INSERT INTO subregiao ( nome_subregiao, codigo_pais) VALUES ( 'Sao Paulo', 1);
+INSERT INTO subregiao ( nome_subregiao, codigo_pais) VALUES ( 'Rio Grande do Sul', 1);
+INSERT INTO subregiao ( nome_subregiao, codigo_pais) VALUES ( 'Rio Grande do NOrte', 1);
+INSERT INTO subregiao ( nome_subregiao, codigo_pais) VALUES ( 'Buenos Aires', 2);
+INSERT INTO subregiao ( nome_subregiao, codigo_pais) VALUES ( 'Cordoba', 2);
+INSERT INTO subregiao ( nome_subregiao, codigo_pais) VALUES ( 'California', 3);
+INSERT INTO subregiao ( nome_subregiao, codigo_pais) VALUES ( 'Florida', 3);
+INSERT INTO subregiao ( nome_subregiao, codigo_pais) VALUES ( 'Toscana', 4);
+INSERT INTO subregiao ( nome_subregiao, codigo_pais) VALUES ( 'Lombardia', 4);
+INSERT INTO subregiao ( nome_subregiao, codigo_pais) VALUES ( 'Aquitania', 5);
+INSERT INTO subregiao ( nome_subregiao, codigo_pais) VALUES ( 'Borgonha', 5);
+INSERT INTO subregiao ( nome_subregiao, codigo_pais) VALUES ( 'Calabria', 5);
+INSERT INTO subregiao ( nome_subregiao, codigo_pais) VALUES ( 'Massachussetts', 3);
+INSERT INTO subregiao ( nome_subregiao, codigo_pais) VALUES ( 'Chiapas', NULL);
+INSERT INTO cidade (nome_cidade, codigo_subregiao) VALUES ('Curitiba', 1);
+INSERT INTO cidade (nome_cidade, codigo_subregiao) VALUES ('Viamão', 3);
+INSERT INTO cidade (nome_cidade, codigo_subregiao) VALUES ('grAmado', 3);
+INSERT INTO cidade (nome_cidade, codigo_subregiao) VALUES (Upper('PortO AleGre'), 3);
+INSERT INTO cidade (nome_cidade, codigo_subregiao) VALUES ('Sao Paulo', 2);
+INSERT INTO cidade (nome_cidade, codigo_subregiao) VALUES ('Guarulhos', 2);
+INSERT INTO cidade (nome_cidade, codigo_subregiao) VALUES ('Buenos Aires', 4);
+INSERT INTO cidade (nome_cidade, codigo_subregiao) VALUES ('La Plata', 4);
+INSERT INTO cidade (nome_cidade, codigo_subregiao) VALUES ('Cordoba', 5);
+INSERT INTO cidade (nome_cidade, codigo_subregiao) VALUES ('Los Angeles', 6);
+INSERT INTO cidade (nome_cidade, codigo_subregiao) VALUES ('San Francisco', 6);
+INSERT INTO cidade (nome_cidade, codigo_subregiao) VALUES ('Orlando', 7);
+INSERT INTO cidade (nome_cidade, codigo_subregiao) VALUES ('Miami', 7);
+INSERT INTO cidade (nome_cidade, codigo_subregiao) VALUES ('Siena', 8);
+INSERT INTO cidade (nome_cidade, codigo_subregiao) VALUES ('Florenca', 8);
+INSERT INTO cidade (nome_cidade, codigo_subregiao) VALUES ('Milao', 9);
+INSERT INTO cidade (nome_cidade, codigo_subregiao) VALUES ('Yokohama', NULL);
+
+
+select * from cidade where oid = 33332
+-- ERRADO pois trás todos com todos
+
+SELECT * FROM cidade CROSS JOIN subregiao
+
+
+SELECT * FROM cidade CROSS JOIN subregiao WHERE cidade.codigo_subregiao = subregiao.codigo_subregiao
+
+SELECT * FROM cidade CROSS JOIN (subregiao CROSS JOIN pais) 
+
+                           
+--ERRADO ligação cidade.codigo_subregiao = subregiao.codigo_pais
+SELECT * FROM cidade CROSS JOIN (subregiao CROSS JOIN pais) 
+                     where cidade.codigo_subregiao = subregiao.codigo_pais and 
+                           subregiao.codigo_pais = pais.codigo_pais
+
+--CORRETO 
+SELECT * FROM cidade CROSS JOIN (subregiao CROSS JOIN pais) 
+                     where cidade.codigo_subregiao = subregiao.codigo_subregiao and 
+                           subregiao.codigo_pais = pais.codigo_pais
+-- Mesmo resultado
+SELECT * FROM cidade, subregiao, pais
+             where cidade.codigo_subregiao = subregiao.codigo_subregiao and 
+                           subregiao.codigo_pais = pais.codigo_pais
+
+SELECT * FROM cidade INNER JOIN subregiao ON TRUE       
+
+-- JOIN multiplos 
+SELECT * FROM cidade INNER JOIN subregiao on 
+cidade.codigo_subregiao = subregiao.codigo_subregiao inner join pais On  
+subregiao.codigo_pais = pais.codigo_pais
+
+SELECT * FROM subregiao INNER JOIN cidade USING (codigo_subregiao)
+
+ SELECT * FROM subregiao NATURAL INNER JOIN cidade   
+-- Relação Uma Subregião pode ter várias cidades  1 => N
+ SELECT * FROM subregiao NATURAL INNER JOIN cidade
+ where nome_subregiao = 'São Paulo'
+ 
+--Relação Uma Cidade está em somente UMA Subregião  1 => 1 
+ SELECT * FROM subregiao NATURAL INNER JOIN cidade
+ where nome_cidade = 'Curitiba'
+
+SELECT * FROM subregiao NATURAL INNER JOIN cidade
+ where nome_subregiao like 'C%'
+
+
+
+update cidade set nome_cidade = Upper(nome_cidade) where codigo_cidade =1;
+--Não encontra
+select * from cidade where nome_cidade = 'porto Alegre';
+--Encontra
+select * from cidade where nome_cidade like 'P%'; 
+--Encontra somente Guarulhos 
+select * from cidade where nome_cidade like 'G%'; 
+--Encontra Guarulhos e grAmado
+select * from cidade where upper(nome_cidade) like 'G%'
+--Encontra só com A
+select * from cidade where nome_cidade like '%A%'; 
+--Encontra 'A' e 'a'
+select * from cidade where upper(nome_cidade) like '%A%'; 
+-- Cada _ é uma letra 
+select * from cidade where upper(nome_cidade) like '_A%'; 
+
+select * from cidade where upper(nome_cidade) like '_A_______'; 
+--Não acha ninguem
+select * from cidade where upper(nome_cidade) like '_A________'; 
+
+
+--LEFT OUTER JOIN  permite trazer as subregiões que não tem cidads
+SELECT * FROM subregiao LEFT OUTER JOIN cidade USING (codigo_subregiao)
+
+-- somente as que não tem cidade
+SELECT * FROM subregiao LEFT OUTER JOIN cidade USING (codigo_subregiao) 
+                        where codigo_cidade  is null 
+
+SELECT * FROM subregiao RIGHT OUTER JOIN pais USING (codigo_pais)                       
+--Todos paises que não tem subregiao 
+SELECT * FROM subregiao RIGHT OUTER JOIN pais USING (codigo_pais)   
+                        where codigo_subregiao  is null 
+                    
+
+-- FULL trás  todos os nulos tanto de cidade e subregiões
+SELECT * FROM subregiao FULL OUTER JOIN cidade USING (codigo_subregiao)
+
+-- Busca cidades sem subregião e subregião sem cidades 
+SELECT * FROM subregiao FULL OUTER JOIN cidade USING (codigo_subregiao)
+              where codigo_subregiao is null or 
+                    codigo_cidade is null
+                 
+--FULL 
+SELECT * FROM cidade FULL JOIN (subregiao FULL JOIN pais USING (codigo_pais)) 
+USING (codigo_subregiao) where nome_subregiao = 'Florida'
+
+--Busca todos 
+SELECT cidade.nome_cidade, subregiao.nome_subregiao FROM cidade LEFT OUTER JOIN subregiao 
+        ON  cidade.codigo_subregiao = subregiao.codigo_subregiao 
+            AND subregiao.nome_subregiao = 'Toscana'
+
+
+            
+SELECT nome_cidade, nome_subregiao FROM cidade RIGHT OUTER JOIN subregiao 
+ ON cidade.codigo_subregiao = subregiao.codigo_subregiao AND nome_subregiao = 'Toscana' 

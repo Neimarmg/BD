@@ -1,0 +1,306 @@
+
+14 Trabalho Prático Transportadora 2013 02
+
+--====================================================================
+CREATE TABLE carros (
+	idCarro serial PRIMARY KEY, 
+	descNomeCarro VARCHAR(20),
+	placa VARCHAR (8) UNIQUE not null,
+	marca VARCHAR(20),
+	autonomia VARCHAR(10),
+	capacidadeCarga NUMERIC not null,
+
+	CHECK(
+		placa > 0
+	)
+	INSERT INTO carros
+	(idCarro, descNomeCarro, placa, marca, autonomia, capacidadeCarga ) VALUE
+	(1, 'Truk', 'ADF 5686', 'FOR', '200km', 8000);
+	(2, 'Carreta', 'GDH 5686', 'IVECO', '500km', 10000);
+	(3, 'Carreta', 'GFR 5686', 'MERCEDES', '300km', 30000);
+)
+--A)
+	SELECT FROM carros,
+	carros.idCarro,
+	carros.descNomeCarro,
+	carros.placa,
+	carros.capacidadeCarga,
+	carros.autonomia,
+	WHERE carros.capacidadeCarga > 5000; 
+	
+--====================================================================
+CREATE TABLE ufs (
+	idUf serial PRIMARY KEY, 
+	uf varChar (2) not null
+)	
+INSERT INTO uf
+(idUf, ufs)VALUE
+(1 , 'RS');
+(2 , 'SC');
+(3 , 'PR');
+(4 , 'SP');
+(5 , 'MT');
+
+--====================================================================
+CREATE TABLE tributos (
+	idTributos serial PRIMARY KEY, 
+	valorTributo integer not null,
+	idUf varChar(2),
+	idTipoTributos integer not null,
+	valorTributo DOUBLE not null,
+	statusTributo BOOLEAN, -- Ativo ou Inativo
+
+	CHECK(
+		idUf > 0 AND
+		idTipoTributos > 0 
+	)
+	
+	FOREIGN KEY (idUf) REFERENCES ufs(idUf),
+	FOREIGN KEY (idTipoTributos) REFERENCES utilitarios(idUtilitarios)
+)
+
+INSERT INTO tributos
+(idTributos ,valorTributo, idUf, statusTributo) VALUE
+(1, 4.55, 1, 0);
+(2, 3.55, 2, 0);
+(3, 4.20, 4, 0);
+(4, 0.00, 1, 0);											
+
+--====================================================================
+CREATE TABLE produtos (
+	idProduto serial PRIMARY KEY, 
+	nomeProduto VARCHAR (50) not null
+	statusProd BOOLEAN, -- Ativo ou Inativo
+	
+	CHECK(
+		idProduto > 0
+	),	
+	FOREIGN KEY (idProduto) REFERENCES tributos(idProduto)
+)
+INSERT INTO tributos
+(idProduto, nomeProduto, idTributos, statusProd) VALUE
+(1, 'Arroz', 1, 0);
+(2, 'carne', 1, 0);
+(3, 'Bebidas',1, 0)
+
+--====================================================================
+CREATE TABLE sevicos (
+	idServico serial PRIMARY KEY, 
+	descServico VARCHAR(30),
+	idServico INTEGER not null,
+	idTipo INTEGER null,
+
+	CHECK(
+		idCustos > 0
+	),	
+	FOREIGN KEY (idServico) REFERENCES sevicos (idServico),
+	FOREIGN KEY (idTipo) REFERENCES utilitarios(idUtilitarios)
+)
+
+INSERT INTO tributos
+(idServico, descServico, idTipo, statusProd) VALUE
+(1, 'Transporte de bebidas', 4, 0);
+(2, 'Transporte de cosméticos', 3, 0);
+(3, 'Transporte de grãos', 4, 0);
+
+-- B)
+	SELECT FROM sevicos 
+	sevicos.idServico,
+	sevicos.idCarro,
+	carros.descNomeCarro,
+	carros.capacidadeCarga,
+	carros.autonomia, 
+	sevicos.descServico
+	FROM (sevicos LEFT JOIN carros ON sevicos.idCarro = carros.idCarro)
+	WHERE (carros.capacidadeCarga < 8500); 
+
+--====================================================================
+CREATE TABLE custos (
+	idCustos serial PRIMARY KEY, 
+	idServico INTEGER not null,
+	idCarro INTEGER not null,
+	valorCustoKm DOUBLE (10,2) not null,
+	situacao BOOLEAN -- Ativo ou Inativo
+	
+	CHECK(
+		idServico > 0 and
+		valorCustoKm > 0 and
+		idCarro > 0 
+	),	
+	FOREIGN KEY (idServico) REFERENCES sevicos(idServico),
+	FOREIGN KEY (idCarro) REFERENCES carros(idCarro)
+)
+INSERT INTO custos
+(idCustos, idServico, idCarro, idTipo, valorCustoKm, statusProd) VALUE
+(1, 1, 1, 4, 10.00, 0);
+(2, 2, 2, 3, 20.00, 0);
+(3, 3, 3, 4, 30.00, 0);
+	
+--====================================================================
+CREATE TABLE motoristas (
+	idMotorista serial PRIMARY KEY, 
+	nomeMotorista VARCHAR(50) not null,
+	fone VARCHAR(15),
+	endereco VARCHAR(50),
+	cnh NUMERIC not null,
+	categoriaCnh VARCHAR (2) not null,
+	validadeCNH date not null,
+	
+	CHECK(
+		cnh > 0 and 
+		validadeCNH > 0
+	)
+)
+
+INSERT INTO custos
+(idMotorista, nomeMotorista, fone, endereco, cnh, categoriaCnh, validadeCNH) VALUE
+(1, 'Mateu da silva', '(51)20124545', 'Ra fornos', '01124587', 'D', '10-10-20');
+(1, 'Onofre feitão', '(65)20124510', 'Rua dep', '056812212', 'D', '10-05-16');
+(1, 'Armadão da casca', '(54)20124578', 'Rua maua', '01145645', 'E', '10-10-16');
+
+--====================================================================
+CREATE TABLE resposavelCarro (
+	idResponsavelCarro serial PRIMARY KEY, 
+	idMotorista INTEGER not null,
+	idCarro INTEGER not null,
+	
+	CHECK(
+		idMotorista > 0 and 
+		idCarro > 0
+	),	
+	FOREIGN KEY (idMotorista) REFERENCES motoristas(idMotorista),
+	FOREIGN  KEY (idCarro) REFERENCES carros(idCarro)
+)
+
+--====================================================================
+CREATE TABLE clientes (
+	idCliente serial PRIMARY KEY, 
+	nomeCliente VARCHAR (50) not null,
+	telefone VARCHAR (15),
+	idCidade INTEGER not null,
+	cnpj VARCHAR (20),
+
+	CHECK(
+		idCidade > 0
+	),	
+	FOREIGN KEY (idCidade) REFERENCES cidades(idCidade)
+)
+INSERT INTO cidades
+(idCliente, nomeCliente , telefone , idCidade , cnpj) Values 
+(1, 'Jose de arimateia', '(51)96542658', 2 ,'122153541/12');
+(2, 'Stanislau', '(51)96542858', 1 ,'128954541/12');
+(3, 'Sansão gambino', '(51)96542618', 3 ,'122154541/12');
+(4, 'Proteu', '(51)96582658', 1 ,'122121241/12');
+
+
+--====================================================================
+CREATE TABLE ordenServico (
+	idOrdemServico serial PRIMARY KEY, 
+	idCliente INTEGER not null,
+	idProduto INTEGER not null,
+	dataOS date not null,
+	idPartida INTEGER not null,
+	distancia NUMERIC not null,
+	qtKm NUMERIC not null,
+	
+	CHECK(
+		idCliente > 0 and
+		idDestino > 0
+	),	
+	FOREIGN KEY (idOrdemServico) REFERENCES ordenServico(idOrdemServico),
+	FOREIGN KEY (idPartida) REFERENCES cidades(idCidade)
+)
+
+	INSERT INTO ordenServico 
+	(i,idOrdemServico,idCliente,dataOS,idPartida,distancia) VALUES
+	(1, 1, '10-10-13', 1, 10);
+	(2, 2, '10-11-13', 2, 50);
+	(3, 3, '04-10-13', 3, 100);
+	
+--====================================================================
+CREATE TABLE itensOS (
+	idItesnOS serial PRIMARY KEY, 
+	idOrdemServico INTEGER not null,
+	idCustos date not null,
+	qtServico NUMERIC not null,
+	
+	CHECK(
+		idCliente > 0 and
+		idCustos > 0 and
+		qtServico > 0
+	),	
+	FOREIGN KEY (idCliente) REFERENCES clientes(idCliente),
+	FOREIGN KEY (idCustos) REFERENCES custos(idCustos)
+)
+
+-- Relatorio de serviços por cidade
+
+SELECT FROM itensOS
+	itensOS.idItesnOS,
+	itensOS.idOrdemServico,
+	custos.valorCustoKm,
+	ordenServico.qtKm,
+	clientes.nomeCliente,
+	cidades.nomeCidade,
+	sevicos.descServico,
+	produtos.nomeProduto,
+
+FROM (((((itensOS INNER JOIN custos ON itensOS.idCustos = custos.idCustos)
+	INNER JOIN itensOS INNER JOIN ordenServico ON itensOS.idItesnOS = ordenServico.idOrdemServico)
+		
+	INNER JOIN itensOS ( INNER JOIN ordenServico ( clientes INNER JOIN cidades ON clientes.idCidade = cidades.idCidade) 
+	ON ordenServico.idCliente = clientes.idCliente ) ON itensOS.idOrdemServico = ordenServico.idOrdemServico)		
+	
+	INNER JOIN itensOS ( ordenServico INNER JOIN produtos ON ordenServico.idProduto = produtos.idProduto)ON 
+	itensOS.idOrdemServico = ordenServico.idOrdemServico)
+	
+	WHERE(cidades.uf = 'RS');
+
+--====================================================================
+CREATE TABLE cidades (
+	idCidade serial primary key,	
+	nomeCidade varChar (200) not null,
+	idUf integer not null,
+	estado VarChar (100) not null,
+	pais varChar (50) not null
+)
+INSERT INTO cidades
+(idCidade, nomeCidade , uf , estado , pais) Values 
+(1, 'Porto alegre' , 'rs' , 'rio grande do sul' , 'Brasil');
+(2, 'Canoas' , 'rs' , 'rio grande do sul' , 'Brasil');
+(3, 'Viamão' , 'rs' , 'rio grande do sul' , 'Brasil');
+(4, 'Ouro Preto' , 'sp' , 'Sao Paulo' , 'Brasil');
+(5, 'Taquara' , 'rs' , 'rio grande do sul' , 'Brasil');
+															
+--====================================================================
+CREATE TABLE tipoUtilitarios (
+	idTipoUtilitario serial primary key,
+	nomeTipoUtilitario varChar(100) not null
+)
+INSERT INTO tipoUtilitarios 
+(idTipoUtilitario, nomeTipoUtilitario) VALUE 
+(1, 'Tipo OS');  
+(2, 'Tipo serviço');
+(3, 'Tipo tributos');
+																		 
+--====================================================================
+CREATE TABLE utilitarios (
+	idUtilitarios serial primary key,	
+	nomeUtilitario varChar (100) not null,
+	idTipoUtilitario integer not null,
+	CHECK(
+		idTipoUtilitario > 0
+		),
+	FOREIGN key (idUtilitarios) REFERENCES tipoUtilitarios(idTipoUtilitario);
+)
+INSERT INTO utilitarios
+(idUtilitarios, nomeUtilitario, idTipoUtilitario)VALUE
+(1, 'Normal', 1);
+(2, 'Agendamento', 1);
+(3, 'Carga perecivel', 2);
+(4, 'Carga seca', 2);
+(5, 'Carga engarrafados', 2);
+(6, 'Carga vidros', 2);
+(7, 'Imposto sobre serviço', 3);
+(8, 'Imposto sobre produto', 3);
+

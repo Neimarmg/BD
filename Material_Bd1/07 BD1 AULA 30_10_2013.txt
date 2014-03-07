@@ -1,0 +1,105 @@
+--AULA 01/10/2013 ==> BD1 - ADS - SENAC RS PROF. FABIO MARQUES
+
+CREATE TABLE clientes
+(
+  cpf character varying(11) NOT NULL,
+  nome character varying(30) NOT NULL,
+  fone character varying(20),
+  endereco varchar(50) NOT NULL,
+  CONSTRAINT clientes_pkey PRIMARY KEY (cpf, nome)
+)
+WITH (
+  OIDS=FALSE
+);
+
+--ALTER TABLE 
+
+alter table clientes add column sexo character  default 'M' NOt Null;
+alter table clientes drop column sexo;
+ALTER TABLE clientes
+  OWNER TO postgres;
+
+alter table clientes add column idtipo integer;
+
+--INSERT 
+
+insert into clientes (cpf,nome,fone,endereco,idtipo)
+       values ('7777888866','rtrtrtrt ','','',1);  
+
+select * from clientes,tipo where idtipo = id_tipo
+
+Create table tipo (
+id_tipo integer,
+tipo char (40));
+
+
+
+--INSERT
+
+insert into tipo values 
+                 ('kkkkk',2),
+                 ('fffff',3);
+
+
+
+
+select * from tipo
+
+--UPDATE
+
+update tipo set tipo='ffffff' 
+        where id_tipo= 2
+
+update clientes set nome='kkkk' where clientes.idtipo = 2
+
+
+
+update clientes set cpf ='44433311133', 
+                    nome ='nnonoonon',
+                    fone ='5151515115'
+                    where sexo = 'M'; 
+
+select * from clientes
+
+--DELETE 
+
+delete from clientes 
+  WHERE idtipo  IN 
+ (SELECT id_tipo  FROM tipo WHERE tipo = 'ffffff') 
+ RETURNING *; 
+
+
+
+--ALTER TABLE 
+
+ALTER TABLE tipo alter column id_tipo to serial;
+ALTER TABLE tipo add column id_tipoSerial  serial;
+
+select * from tipo
+
+alter table tipo drop column id_tipo;
+alter table tipo rename column id_tiposerial to id_tipo
+alter table tipo add  primary Key (id_tipo) 
+alter table tipo alter column tipo type  varchar(80);
+
+insert into tipo (tipo) values ('kkkk'), 
+                               ('xxxxx'),
+                               ('zzzzz');
+--TRANSACTION  ACID
+--A=ATOMICA
+--C=cONSISTENTE
+--I=iNDEPENDENTE
+--D=dURÁVEL
+
+begin transaction; 
+
+UPDATE tipo  SET tipo = 'ggggggg'
+     WHERE id_tipo >1;
+
+     select * from tipo;
+commit;  -- OU ROLLBACK;
+
+end;
+
+select * from tipo
+                               

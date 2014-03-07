@@ -1,0 +1,303 @@
+CREATE TABLE tipoUtilitarios ( -- Tipo especifivo de cada grupo de utilitarios
+	idTipoUtilitario serial primary key,
+	nomeTipoUtilitario varChar(100) not null
+)
+
+CREATE TABLE utilitarios ( -- Tabela generica geral que armazena os grupos de todos dos tipos solicitados no sistema 
+	idUtilitarios serial primary key,
+	nomeUtilitario varChar (100) not null,
+	idTipoUtilitario integer not null,
+	CHECK(
+	idTipoUtilitario > 0
+	),
+	FOREIGN key (idUtilitarios) REFERENCES tipoUtilitarios(idTipoUtilitario)
+)
+
+CREATE TABLE dadosMinhaEmpresa (  
+	idMinhasEmpresa serial PRIMARY KEY,
+	desNomeMinhaEmpresa varChar (100) not null,
+	endereco varChar (100) not null,
+	idCidade integer not null,
+	foneContato varChar(15) null,
+	email varChar (30) null,
+	
+	CHECK(
+		idCidade > 0 	
+	),
+	FOREIGN KEY(idCidade) REFERENCES cidades(idCidade)
+)
+
+CREATE TABLE cidades (
+	idCidade serial primary key,
+	nomeCidade varChar (200) not null,
+	uf varChar (2) not null,
+	estado VarChar (100) not null,
+	pais varChar (50) not null
+)
+
+CREATE TABLE colaboradores ( --Tabela de cadastro de vendedores
+	idColaborador serial primary key,
+	idTipoColaborador integer not null,
+	idCargo integer not null,
+	nomeColaborador varChar (200) not null,
+	cpf varChar (15) UNIQUE,
+	endereco varChar(200) null,
+	idCidade integer null,
+	CHECK(
+		idTipoColaborador > 0 and
+		idCargo > 0 and
+		idCidade > 0
+	),
+	FOREIGN key (idTipoColaborador) REFERENCES utilitarios(idUtilitarios),
+	FOREIGN key (idCargo) REFERENCES utilitarios(idUtilitarios),
+	FOREIGN key (idCidade) REFERENCES cidades(idCidade)
+)
+
+CREATE TABLE produtosServicos(
+	idProdutos serial PRIMARY KEY,
+	idTipoProduto integer not null,
+	idMarca integer null,
+	modelosProduta varChar (20) null,
+	nroSerie varChar (20) null,
+	idModealidadeVenda integer not null, -- Indica como esse produto ou serviço vai ser vendido unidade ou hora ou metro
+	descProduto varChar not null,
+	estatuProduto boolean, -- 0 = Sim, 1 = Não 
+	obs varChar (255) null,		
+	CHECK(
+		idTipoProduto > 0 and
+		idMarca > 0 and
+		idModealidadeVenda > 0		
+	),
+	FOREIGN KEY(idTipoProduto) REFERENCES utilitarios(idUtilitarios),
+	FOREIGN KEY(idMarca) REFERENCES utilitarios(idUtilitarios),
+	FOREIGN KEY(idModealidadeVenda) REFERENCES utilitarios(idUtilitarios)
+)
+
+CREATE TABLE medidasDeVenda (  
+	idMedidasDeVenda serial PRIMARY KEY,
+	idProduto integer not null REFERENCES produtosServicos ON DELETE RESTRICT,
+	valorMedida decimal (10,10),
+	idTipoMedidaVenda integer not null, -- kilos or metro or metroQuadrado or metroCubico or unidadeQuadrada or tonelada or dia ou hora etc
+	statuMedidaVenda boolean, -- 0 = Sim, 1 = Não 
+	CHECK(
+		idTipoMedidaVenda > 0
+	),
+	FOREIGN KEY(idProduto) REFERENCES produtosServicos(idProduto),
+	FOREIGN KEY(idTipoMedidaVenda) REFERENCES utilitarios(idUtilitarios)
+)
+
+CREATE TABLE precos (
+	idPrecos serial PRIMARY KEY,
+	idProduto integer not null REFERENCES produtosServicos ON DELETE RESTRICT,
+	idMedidasDeVenda integer not null REFERENCES medidasDeVenda ON DELETE RESTRICT,
+	dataAlteracao data not null DEFAULT (CURRENT_DATE),
+	precoAtivo boolean, -- 0 = Sim, 1 = Não 
+	idTipoPreco integer not null  -- Preço de venda, Preço de compra
+	promocao boolean, -- 0 = Sim, 1 = Não 
+	ObsPreco char null, 
+	CHECK(
+		idProduto > 0 and
+		idMedidasDeVenda > 0 and
+		idTipoPreco > 0
+	),
+	FOREIGN KEY(idProduto) REFERENCES produtosServicos(idProduto),
+	FOREIGN KEY(idMedidasDeVenda) REFERENCES medidasDeVenda(idMedidasDeVenda),
+	FOREIGN KEY(idTipoPreco) REFERENCES utilitarios(idUtilitarios)
+)
+
+CREATE TABLE pedidoDeCompra (  -- Complemento alem do exercicio
+	idPedidoDeCompra serial PRIMARY KEY,
+	idFornecedor integer not null REFERENCES colaboradores ON DELETE RESTRICT,
+	idFormaPagamento integer not null,
+	dataPedido data not null DEFAULT (CURRENT_DATE),
+	dataEntrega data not null DEFAULT (CURRENT_DATE),
+	dataPedido data not null DEFAULT (CURRENT_DATE),
+	idStatuPedidoCompra integer not null, -- Solicitado, Em aberto, Conferido
+	CHECK(
+		idFornecedor > 0 and
+		idFormaPagamento > 0
+	),
+	FOREIGN KEY(idFornecedor) REFERENCES colaboradores(idColaborador),
+	FOREIGN KEY(idFormaPagamento) REFERENCES utilitarios(idUtilitarios)
+)
+
+CREATE TABLE ItensPedidoDeCompra (  -- Complemento alem do exercicio
+	idItensPedidoDeCompra serial PRIMARY KEY,
+	idPedidoDeCompra integer not null REFERENCES pedidoDeCompra ON DELETE CASCADE,
+	idPrecos integer not null REFERENCES pedidos ON DELETE RESTRICT,
+	desconto decimal (10,2) null, 
+	acrescimo decimal (10,2) null,
+	qtCompra numeric not null, 
+	CHECK(
+		idPedidoDeCompra > 0 and
+		idPrecos > 0 and 
+		qtCompra > 0 
+	),
+	FOREIGN KEY(idPedidoDeCompra) REFERENCES pedidoDeCompra(idPedidoDeCompra),
+	FOREIGN KEY(idPrecos) REFERENCES precos(idPrecos)
+)
+
+CREATE TABLE clientes (
+	idCliente serial primary key,
+	idTipoClientes integer not null,
+	nomeCliente varChar (200) not null,
+	cpf varChar (15) UNIQUE,
+	cnpj varChar (20) UNIQUE,
+	endereco varChar(200) null,
+	idCidade integer null,
+	CHECK(
+		idTipoClientes > 0 and
+		idCidade > 0 
+	),
+	FOREIGN key (idTipoClientes) REFERENCES utilitarios(idUtilitarios),
+	FOREIGN key (idCidade) REFERENCES cidades(idCidade)
+)
+
+CREATE TABLE contratos (  
+	idContrato serial PRIMARY KEY,
+	idMinhasEmpresa integer not null REFERENCES dadosMinhaEmpresa ON DELETE RESTRICT,
+	idCliente integer not null REFERENCES clientes ON DELETE RESTRICT,
+	idTipoContrato integer not null,
+	clausulas text not null,
+	dataEmissãoContrato date not null DEFAULT(CURRENT_DATE),
+	firmadoContratoData date not null DEFAULT(CURRENT_DATE),
+	finalizadoContratoData date not null DEFAULT(CURRENT_DATE),
+	obsContrato text null, 	
+	decontoMinimo decimal (10,2) null,
+	decontoMaximo decimal (10,2) null,
+	idEstatusContrato integer not null, -- Liquidado,Vigente,em negociação, suspenço
+	CHECK(
+		idMinhasEmpresa > 0 and
+		idCliente > 0 and
+		idTipoContrato > 0 and
+		(firmadoContratoData < finalizadoContratoData)	
+	),
+	FOREIGN KEY(idMinhasEmpresa) REFERENCES idMinhasEmpresa(idMinhasEmpresa),
+	FOREIGN KEY(idCliente) REFERENCES clientes(idCliente),
+	FOREIGN KEY(idTipoContrato) REFERENCES utilitarios(idUtilitarios),
+	FOREIGN KEY(idEstatusContrato) REFERENCES utilitarios(idUtilitarios)
+)
+
+CREATE TABLE pedidos (
+	idPedido serial PRIMARY KEY, 
+	idVendedor integer not null REFERENCES colaboradores ON DELETE RESTRICT,
+	idContrato integer null REFERENCES contrato ON DELETE CASCADE,
+	idCliente integer not null REFERENCES clientes ON DELETE RESTRICT,
+	idFormaPagamento integer not null,
+	dataDoPedido date not null DEFAULT (CURRENT_DATE),
+	dataEntrega date not null DEFAULT (CURRENT_DATE),
+	dataPagamento date not null DEFAULT (CURRENT_DATE),
+	CHECK(
+		idVendedor > 0 and
+		idCliente > 0 and
+		idFormaPagamento > 0 and
+		(dataDoPedido >= (dataEntrega and dataPagamento))
+		),
+	FOREIGN KEY(idVendedor) REFERENCES colaboradores(idColaborador),
+	FOREIGN KEY(idCliente) REFERENCES clientes(idCliente),
+	FOREIGN KEY(idFormaPagamento) REFERENCES utilitarios(idUtilitarios)
+)
+
+CREATE TABLE itensPedido(
+	idItensPedido serial PRIMARY KEY,
+	idPedido integer not null REFERENCES pedidos ON DELETE CASCADE,
+	idPrecos integer not null REFERENCES precos ON DELETE RESTRICT,
+	desconto decimal (10,2) null, -- O desconto dever estar entre o estipulado em contrato!
+	acrescimo decimal (10,2) null,
+	qtVenda numeric not null, 
+	CHECK(
+		idPedido > 0 and
+		idPrecos > 0 and 
+		qtVenda > 0 
+	),
+	FOREIGN KEY(idPedido) REFERENCES pedidos(idPedido),
+	FOREIGN KEY(idPrecos) REFERENCES precos(idPrecos)
+)
+
+CREATE TABLE bancos  (  
+	idBanco serial PRIMARY KEY,
+	nomeBanco varChar not null,
+	codBanco varChar (10) not null,
+	webPage varChar (30) not null,	
+)
+
+CREATE TABLE motivoDevolucaoCheque (  
+	idMotivo serial PRIMARY KEY,
+	nroMotivo varChar(5) not null,
+	desMotivo varChar (200) not null,
+)
+
+CREATE TABLE cheques (  
+	idCheque serial PRIMARY KEY,
+	idContasReceber integer not null REFERENCES contasReceber ON DELETE RESTRICT,
+	idBanco integer not null REFERENCES bancos ON DELETE RESTRICT,
+	agancia varChar not null,
+	nroConta varChar double not null,
+	valorCheque double not null,
+	estatusChaque integer not null,
+	statusParcela boolean,  -- 0 = Paga, 1 = Deve
+	dataRepresentacao date not null,
+	CHECK(
+		idContasReceber > 0 and
+		idBanco > 0 and
+		valorCheque > 0 
+	),
+	FOREIGN KEY(idBanco) REFERENCES bancos(idBanco),
+	FOREIGN KEY(idContasReceber) REFERENCES contasReceber(idContasReceber)
+)
+
+CREATE TABLE RegistroDevCheque (  
+	idRegistroDevChaques serial PRIMARY KEY,
+	idCheque integer not null REFERENCES cheques ON DELETE CASCADE,
+	idMotivo inte not null REFERENCES motivoDevolucaoCheque ON DELETE RESTRICT,
+	dataDevolucao date not null DEFAULT(CURRENT_DATE),
+	CHECK(
+		idMotivo > 0 and 
+		idCheque > 0 
+	),
+	FOREIGN KEY(idCheque) REFERENCES cheques(idCheque),
+	FOREIGN KEY(idMotivo) REFERENCES motivoDevolucaoCheque(idMotivo)
+)
+
+CREATE TABLE contasReceber (  
+	idContasReceber serial PRIMARY KEY,
+	idCliente integer not null REFERENCES clientes ON DELETE RESTRICT,
+	idPedido integer not null REFERENCES pedidos ON DELETE CASCADE
+	idParcelas integer not null,
+	valorApagar double not null
+	encargos double not null,
+	idCheque integer null REFERENCES cheques ON DELETE RESTRICT,
+	estatusParcela boolean  -- 0 = Paga, 1 = Deve
+	dataVencimento date not null DEFAULT(CURRENT_DATE),
+	CHECK(
+		idCliente > 0 and
+		idPedido > 0 and
+		idParcelas > 0		
+	),
+	FOREIGN KEY(idCliente) REFERENCES clientes(idCliente),
+	FOREIGN KEY(idPedido) REFERENCES pedidos(idPedido)
+)
+
+CREATE TABLE rebebimentos (  
+	idRecebimentos serial PRIMARY KEY,
+	idCliente integer not null REFERENCES clientes ON DELETE RESTRICT,
+	idPedido integer not null REFERENCES pedidos ON DELETE CASCADE,
+	idParcelas integer not null,
+	idFormaPagamento integer not null,
+	idLancamentos integer null, --Implementação referencia ao caixa da empresa nao implementado!
+	valorRecebimento double not null,
+	acrecimo double not null,
+	desconto double not null,
+	dataPagamento date not null DEFAULT(CURRENT_DATE),
+	estatusParcela boolean, -- 0 = Paga, 1 = Deve
+	
+	CHECK(
+		idCliente > 0 and
+		idPedido > 0 and
+		idParcelas > 0 and
+		idFormaPagamento > 0 and
+	),
+	FOREIGN KEY(idCliente) REFERENCES clientes(idCliente),
+	FOREIGN KEY(idPedido) REFERENCES pedidos(idPedido),
+	FOREIGN KEY(idFormaPagamento) REFERENCES utilitarios(idUtilitarios),
+)

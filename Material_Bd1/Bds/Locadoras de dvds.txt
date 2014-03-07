@@ -1,0 +1,278 @@
+
+15 TRABALHO FINAL LOCADORA DE DVDS 2013 02
+
+--====================================================================
+CREATE TABLE produtores (
+	idProdutor serial primary key,
+	nomeProdutor varChar(50) not null,
+	nomeArtistico varChar(50) null,
+	idTipoProdurora integer not null,
+	idCidade integer null,
+	dataNasc date null,
+	
+	CHECK(
+		idProdutora > 0
+		),	
+	FOREIGN KEY (idTipoProdurora) REFERENCES utilitarios(idUtilitarios),
+	FOREIGN KEY (idCidade) REFERENCES cidades(idCidade)
+)
+
+SELECT * produtores;
+
+INSERT INTO produtores
+(idProdutor, nomeProdutor, idProdutor, idCidade) VALUE
+(1, 'Carlos Nobrega', 1, 1)
+
+--====================================================================
+CREATE TABLE albuns (
+	idAlbuns serial primary key,
+	nomeAlbum varChar(50), not null,
+	idFilme integer not null,
+
+	CHECK(
+		idFilme > 0
+		),	
+	FOREIGN KEY () REFERENCES ()
+)
+SELECT * albuns;
+
+--====================================================================
+CREATE TABLE filmes (
+	idFilme serial primary key,	
+	nomeFilme varChar (50),
+	idTipoFilme integer not null,
+	idProdutor integer not null,
+	idAlbuns integer not null,
+	dataNascimento data not null DEFAULT(CURRENT_DATE),
+	duracaoTotal integer not null,
+	unidadeDvd NUMERIC not null DEFAULT(NUMBER_BASE),
+	status BOOLEAN -- Sim/Não
+	
+	CHECK(
+		idTipoFilme > 0 and 
+		idProdutora > 0 and 
+		idAlbuns > 0 and
+		unidadeDvd > 0 and
+		duracao > 0 
+		),	
+	FOREIGN KEY (idTipoFilme) REFERENCES utilitarios(idUtilitarios),
+	FOREIGN KEY (idProdutor) REFERENCES produtores(idProdutor),
+	FOREIGN KEY (idAlbuns) REFERENCES albuns(idAlbuns)
+)
+
+SELECT * filmes;
+
+--====================================================================
+CREATE TABLE dvds (
+	idDvds serial primary key,	
+	idFilme integer not null REFERENCES filmes ON DELETE CASCADE,	
+	duracao VARCHAR (10) not null,
+	
+	CHECK(
+		idFilme > 0
+		),	
+	FOREIGN KEY (idFilme) REFERENCES filmes(idFilme)
+)
+
+SELECT * dvds;
+
+--====================================================================
+CREATE TABLE elenco (
+	idElenco serial primary key,
+	idProdutor integer not null,
+	idFilme integer not null REFERENCES filmes ON DELETE CASCADE,
+	idPapelElenco integer null,
+
+	CHECK(
+		idProdutor > 0 and
+		idFilme > 0 
+ 		),	
+	FOREIGN KEY (idProdutor) REFERENCES produtores(idProdutor),
+	FOREIGN KEY (idFilme) REFERENCES filmes(idFilme),
+	FOREIGN KEY (idPapel) REFERENCES utilitarios(idUtilitarios)
+)
+
+SELECT * albuns;
+
+--====================================================================
+CREATE TABLE precosLocacao {
+	idPrecoLoc serial PRIMARY KEY, 
+	idFilme integer not null,
+	idTipoPreco integer not null,
+	valorLoc DOUBLE not null,
+	dataIncio data not null DEFAULT(CURRENT_DATE),
+	datafim data not null DEFAULT(CURRENT_DATE),
+	
+	CHECK(	
+		idFilme > 0 and
+		idTipoPreco > 0 and
+		dataIncio >= datafim 
+	),	
+	FOREIGN KEY (idCidade) REFERENCES cidades(idCidade),
+	FOREIGN KEY (idTipoPreco) REFERENCES utilitarios(idUtilitarios)
+)
+
+SELECT * clientes;
+
+--====================================================================
+CREATE TABLE clientes {
+	idCliente serial PRIMARY KEY, 
+	nomeCliente VARCHAR (50) not null,
+	telefone VARCHAR (15),
+	idCidade INTEGER not null,
+	endereco varChar (100) NOT NULL,
+	emissaoCartao BOOLEAN,-- Sim/Não
+	dataEmissao date null,
+	status BOOLEAN -- cliente ativo 'Sim/Não'
+	
+	CHECK(	
+		idCidade > 0
+	),	
+	FOREIGN KEY (idCidade) REFERENCES cidades(idCidade)
+)
+
+SELECT * clientes;
+
+INSERT INTO clientes
+(idCliente, nomeCliente , telefone , idCidade, endereco , emissaoCartao , dataEmissao, status) Values 
+(1, 'Jose de Arimateia', '(51)96542658', 2 ,'av tavares', sim , '10-02-2013', sim);
+(2, 'Stanislau Pederasta', '(51)96542858', 1 ,'rua gras', sim , '0210-2013', sim);
+(3, 'Sansão Gambino', '(51)96542618', 3 ,'rua silcar', não , '10-02-2013', sim);
+(4, 'Proteu Celestino', '(51)96582658', 1 ,'beco simão', sim , '02-10-2013', sim);
+
+
+--====================================================================
+CREATE TABLE locacoes {
+	idLocacao serial PRIMARY KEY, 
+	idCliente VARCHAR (50) not null,
+	dataLoc data not null DEFAULT (CURRENT_DATE),
+	dataDev data not null DEFAULT (CURRENT_DATE +1),
+	idTipoLoc integer (100) NOT NULL,
+	statusLoc BOOLEAN -- Sim/Não
+
+	CHECK(	
+		idCliente > 0 and
+		idTipoLoc > 0 
+	),	
+	FOREIGN KEY (idCliente) REFERENCES clientes(idCliente),
+	FOREIGN KEY (idTipoLoc) REFERENCES utilitarios(idUtilitarios)
+)
+
+SELECT * locacoes
+
+--====================================================================
+CREATE TABLE itensLocados {
+	idItensLocados serial PRIMARY KEY, 
+	idLocacao integer not null REFERENCES locacoes ON DELETE CASCADE,
+	idPrecoLoc integer not null,
+	qtItem NUMERIC not null,
+	acrescimo NUMERIC not null,
+	desconto NUMERIC not null,
+	dataLoc date not null,
+	dataDev date not null,
+	idStatusIntem integer not null,
+	
+	CHECK(	
+		idLocacao > 0 and 
+		idPrecoLoc > 0 and
+		idStatusIntem > 0 and
+		qtItem > 0
+	),	
+	FOREIGN KEY (idLocacao) REFERENCES locacoes(idLocacao),
+	FOREIGN KEY (idPrecoLoc) REFERENCES precoLoc(idPrecoLoc),
+	FOREIGN KEY (idStatusIntem) REFERENCES utilitarios(idUtilitarios)
+)
+
+SELECT * itensLocados;
+
+--RELATÓRIO INTES LOCADOS 
+SELECT FROM itensLocados 
+	itensLocados.idItensLocados,
+	itensLocados.idLocacao,
+	locacoes.idCliente, -- ref a tab locacoes com uma ligação virtual a cliente
+	cliente.nomeCliente, -- ref a tab cliente
+	filmes.nomeFilme, -- ref a tab precosLocacao com uma ligação virtual a filmes
+	precosLocacao.valorLoc, -- ref a tab precoLoc 
+	utilitarios.nomeUtilitario as StatusLocação, -- ref a tab utilitarios 
+	itensLocados.qtItem,
+	itensLocados.acrescimo,
+	itensLocados.desconto,
+	if (dataLoc = dataDev, valorLoc + acrescimo - desconto , (((dataDev - dataLoc) *precoLoc) + acrescimo) - desconto) as TotalAPpagar
+
+	FROM ((( itensLocados INNER JOIN locacoes ON itensLocados.idPrecoLoc = precosLocacao.idLocacao )
+		INNER JOIN itensLocados ( locacoes INNER cliente ON locacoes.idCliente = cliente.idCliente ) ON itensLocados.idLocacao = locacoes.idLocacao )
+		INNER JOIN itensLocados ( precoLoc INNER JOIN filmes ON precoLoc.idFilme = precoLoc.idFilme ) ON itensLocados.idPrecoLoc = idPrecoLoc )
+		INNER JOIN utilitarios ON itensLocados.idStatusIntem = utilitarios.idUtilitarios 
+	WHERE(utilitarios.nomeUtilitario = 'Locado');
+
+--====================================================================
+CREATE TABLE cidades (
+	idCidade serial primary key,	
+	nomeCidade varChar (200) not null,
+	idUf integer not null,
+	estado VarChar (100) not null,
+	pais varChar (50) not null
+)
+
+SELECT * cidades
+INSERT INTO cidades
+(idCidade, nomeCidade , uf , estado , pais) Values 
+(1, 'Porto alegre' , 'rs' , 'rio grande do sul' , 'Brasil');
+
+--====================================================================
+CREATE TABLE tipoUtilitarios (
+	idTipoUtilitario serial primary key,
+	nomeTipoUtilitario varChar(100) not null
+)
+INSERT INTO tipoUtilitarios 
+(idTipoUtilitario, nomeTipoUtilitario) VALUE 
+(1, 'Tipo Produtor');
+(2, 'Categoria Filme');
+(3, 'Papel elenco');
+(4, 'Tipo Locação');
+(5, 'Tipo preço locação');
+(6, 'Status intem');
+
+--====================================================================
+CREATE TABLE utilitarios (
+	idUtilitarios serial primary key,	
+	nomeUtilitario varChar (100) not null,
+	idTipoUtilitario integer not null,
+	CHECK(
+		idTipoUtilitario > 0
+		),
+	FOREIGN key (idUtilitarios) REFERENCES tipoUtilitarios(idTipoUtilitario)
+)
+
+SELECT * utilitarios;
+
+INSERT INTO utilitarios
+(idUtilitarios, nomeUtilitario, idTipoUtilitario)VALUE
+(1, 'Editor', 1);
+(2, 'Ator', 1);
+(3, 'Diretor', 1);
+(4, 'Drama', 2);
+(5, 'Comédia', 2);
+(6, 'Aventura', 2);
+(7, 'Humor', 2);
+(9, 'Ator principal', 3);
+(10, 'Secundario', 3);
+(11, 'Normal', 4);
+(12, 'Reserva', 5);
+(13, 'Lancamento', 5);
+(14, 'promoção', 5);
+(15, 'Normal', 5);
+(16, 'Locado', 6);
+(17, 'Agendado', 6);
+(18, 'Acertado', 6);
+(19, 'Devolvido', 6);
+
+
+
+
+
+
+
+
+
+

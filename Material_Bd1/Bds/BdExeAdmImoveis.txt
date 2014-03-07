@@ -1,0 +1,60 @@
+﻿CREATE TABLE  adminsitradora(
+	idAdm serial primary key,
+	descNomeAdm varChar(50) not null)
+
+CREATE TABLE condominios(
+	idCondominio serial primary key,
+	nomeCond varChar(100)not null,
+	endereco VarChar(200)not null,	
+	idAdm integer,
+constraint idAdmFK foreign key(idAdm)references Adminsitradora (idAdm))
+
+CREATE  TABLE unidades (
+	idUnidade serial unique primary key,
+	idCondominio integer not null,
+	descUnidade  varChar(10) not null,
+	tamanho integer not null,
+	valorAluguel numeric not null,
+CHECK (valorAluguel >0),
+constraint idCondfk foreign key(idCondominio)references condominios(idCondominio))
+
+CREATE TABLE tipos( --Tab que referencia os tipo de pessoas
+	idTipo serial primary key,
+	descTipos varChar(30) not null,
+CHECK(descTipos <> null)
+)
+
+CREATE TABLE pessoas(
+	idPessoas serial primary key,
+	idTipoPessoa integer,
+	nomePessoa varChar(100) not null,
+	cpf  varChar(11) unique not null,
+	endereco varChar(200),
+CHECK (
+idTipoPessoa > 0 and 
+nomePessoa <> null and
+cpf <> null
+),
+constraint idTipoPessoafk foreign key(idTipoPessoa) references tipos(idTipo)
+)
+
+CREATE TABLE alugueis (
+	idAluguel serial primary key,
+	idUnidade integer not null,
+	idPessoa integer not null,
+	dataInicioLoc date not null,
+	dataFimLoc date not null,
+	dataEntraga date null,
+	status boolean,
+CHECK (
+idUnidade > 0 and
+idPessoa > 0
+),
+constraint idInidadekf foreign key (idUnidade)references unidades(idUnidade),
+constraint idPessoakf foreign key (idPessoa)references pessoas(idPessoas)
+)
+
+
+ALTER TABLE alugueis ADD column valorA decimal (10,2)
+SELECT * from alugueis
+DROP TABLE tipos 

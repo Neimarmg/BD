@@ -1,0 +1,332 @@
+CREATE TABLE clinica (
+	idClinica serial primary key,
+	nomeClinica	varChar (200) not null,
+	idCidade integer not null,
+	endereco varChar (200),
+	foneComercial varChar (15) null,
+	CHECK(
+		idCidade > 0
+		),
+	FOREIGN key (idCidade) REFERENCES cidades(idCidade)
+)
+
+CREATE TABLE unidades (
+	idUnidade serial primary key,
+	idClinica integer not null,
+	nomeUnidade varchar (200) not null,
+	idCidade integer not null,
+	endereco varchar (200) null,
+	foneComercial VARCHAR (15) null,
+	CHECK(
+		idClinica > 0 and
+		idCidade > 0
+		),
+	FOREIGN key (idCidade) REFERENCES cidades(idCidade),
+	FOREIGN key (idClinica) REFERENCES clinica(idClinica)	
+)
+
+CREATE TABLE quartos (
+	idQuarto serial primary key,
+	idUnidade integer not null,
+	idCategoriaQuarto integer not null,
+	nroQuarto numeric not null,
+	andarQuarto numeric not null,
+	statusQuarto boolean,
+	CHECK(
+		nroQuarto > 0 and
+		idUnidade > 0 and
+		nroQuarto > 0 and
+		andarQuarto > 0 
+		),
+	FOREIGN key (idUnidade) REFERENCES unidades(idUnidade),
+	FOREIGN key (idCategoriaQuarto) REFERENCES utilitarios(idUtilitarios)
+)
+
+CREATE TABLE salasConsultorios (
+	idSalasConsultorios serial primary key,
+	idUnidade integer not null,
+	nroSala integer not null,
+	andarSala numeric not null,
+	statusSala boolean,
+	CHECK(
+		idUnidade > 0 and
+		nroSala > 0 and
+		andarSala > 0
+		),
+	FOREIGN key (idUnidade) REFERENCES unidades(idUnidade)
+)
+
+CREATE TABLE salaMedicos ( -- Salas destinadas aos consultórios dos médicos.
+	idSalasMedicos serial primary key,	
+	idMedico varChar (100) not null,
+	idSalasConsultorios integer not null,
+	dataUtilizacao date not null,
+	statusConsultorio boolean -- -1 = Ativo, 0 = Inativo
+	CHECK(
+		idMedico > 0 and
+		idSalasConsultorios > 0 and dataUtilizacao != date() and statusConsultorio = -1
+		),
+	FOREIGN key (idUtilitarios) REFERENCES tipoUtilitarios(idTipoUtilitario)
+)
+
+CREATE TABLE colaboradores (
+	idColaborador serial primary key,
+	idUnidade integer not null,
+	idTipoColaborador integer not null,
+	idCargo integer not null, 
+	nomeColaborador varChar (200) not null,
+	cpf varChar (15) UNIQUE,
+	crm varChar(10) null,
+	endereco varChar(200) null,
+	idCidade integer null,
+	CHECK(
+		idTipoColaborador > 0 and
+		idCidade > 0 and
+		idUnidade > 0 and
+		idCargo > 0 
+		),	
+	FOREIGN key (idUnidade) REFERENCES unidades(idUnidade),
+	FOREIGN key (idTipoColaborador) REFERENCES utilitarios(idUtilitarios),
+	FOREIGN key (idCargo) REFERENCES utilitarios(idUtilitarios),
+	FOREIGN key (idCidade) REFERENCES cidades(idCidade)
+)
+
+CREATE TABLE pacientes (
+	idPaciente serial primary key,
+	idTipoPaciente integer,	
+	nomePaciente varChar (50) not null,
+	rgPaciente varChar(15) not null,
+	cpfPaciente varChar(15) not null,
+	dataNasc date not null,
+	foneResidencial varChar (15) null,
+	endereco varChar (100) not null,
+	CHECK(
+		idTipoPaciente > 0 and
+		nomePaciente > 0 and
+		rgPaciente > 0 and
+		cpfPaciente > 0 and
+		endereco > and
+	 ),
+	FOREIGN key (idTipoPaciente) REFERENCES utilitarios(idUtilitarios)
+)
+
+CREATE TABLE especialidades (
+	idEspecialidade serial primary key,	
+	descEspecialidade varChar (200) not null,
+)
+
+CREATE TABLE horariosConsultas (
+	idHorariosConsultas serial primary key,	
+	idAgenda integer not null,
+	hora date not null,	
+	statusHorario boolean -- 0 = Livre , 1 = Agendada
+	CHECK(
+		idAgenda > 0 and
+		hora > 0 
+		),
+	FOREIGN key(idHorariosConsultas) REFERENCES agenda(idAgenda),
+)
+
+CREATE TABLE agenda (
+	idAgenda serial primary key,
+	idUnidade integer not null,
+	idMedico integer not null,
+	idEspecialidade integer not null,
+	dataAgenda date not null,
+	CHECK(
+		idUnidade > 0 and
+		idColaborador > 0 and
+		idEspecialidade > 0 and
+		),
+	FOREIGN key (idUnidade) REFERENCES unidades(idUnidade),
+	FOREIGN key (idMedico) REFERENCES colaboradores(idColaborador),	
+	FOREIGN key (idEspecialidade) REFERENCES especialidades(idEspecialidade)
+)
+
+CREATE TABLE prontuarios (
+	idProntuario serial primary key,	
+	idPaciente integer not null,
+	idMedico integer not null,
+	idEspecialidade integer not null,
+	idUnidade integer not null,
+	descAnotacao char null,
+	dataAnotacao date not null,
+	CHECK(
+		idPaciente > 0 and
+		idMedico > 0 and
+		idEspecialidade > 0and 
+		idUnidade > 0 
+		),
+	FOREIGN key (idPaciente) REFERENCES pacientes(idPaciente),
+	FOREIGN key (idMedico) REFERENCES colaboradores(idColaborador), 
+	FOREIGN key (idEspecialidade) REFERENCES especialidades(idEspecialidade),
+	FOREIGN key (idUnidade) REFERENCES unidades(idUnidade)
+)
+
+CREATE TABLE consultas (
+	idConsulta serial primary key,
+	idPaciente integer not null,
+	idMedico integer not null,
+	idEspecialidade integer not null,
+	idUnidade integer not null,
+	idHorariosConsultas integer UNIQUE,
+	idStatusMarcacao integer not null -- Marcada, Efetivada, Cancelada, Não coparaceu 
+
+	CHECK( 
+		idPaciente > 0 and
+		idMedico > 0 and
+		idEspecialidade > 0 and
+		idUnidade > 0 and
+		idStatusMarcacao > 0
+		),
+	FOREIGN key (idPaciente) REFERENCES pacientes(idPaciente),	 
+	FOREIGN key (idMedico) REFERENCES colaboradores(idColaborador),
+	FOREIGN key (idEspecialidade) REFERENCES especialidades(idEspecialidade),
+	FOREIGN key (idUnidade) REFERENCES unidades(idUnidade),
+	FOREIGN key (idHorariosConsultas) REFERENCES horariosConsultas(idHorariosConsultas),
+	FOREIGN key (idStatusMarcacao) REFERENCES utilitarios(idUtilitarios)
+)
+
+CREATE TABLE atendimento (
+	idAtendimento serial primary key,	
+	idConsulta integer null,
+	idSalasConsultorios integer null, -- Obs. A sala de consulta só será definida na hora do atendimento
+	dataAtendimento	date not null DEFAULT = date,
+	idTipoAtendimento integer not null, -- Consulta, consulta e baixado, baixa, autorizações -- 
+	idProntuario integer null
+	
+	CHECK(
+		idTipoAtendimento > 0 and
+		(idSalasConsultorios > 0 or idSalasConsultorios = 0 )and  -- finalidade evitar que seja inserido caracteres de texto no campo.
+		((idSalasConsultorios > 0 and idProntuario > 0) or (idProntuario > 0))
+		),
+	FOREIGN key (idConsulta) REFERENCES consulta(idConsulta),
+	FOREIGN key (idSalasConsultorios) REFERENCES salasConsultorios(idSalasConsultorios),
+	FOREIGN key (idTipoAtendimento) REFERENCES utilitarios(idUtilitarios),
+	FOREIGN key (idProntuario) REFERENCES prontuarios(idProntuario),
+)
+
+CREATE TABLE internacoes (
+	idInterncoes serial primary key,	
+	idAtendimento integer not null,
+	idQuarto integer not null
+	idMedico integer not null,
+	statuPaciente boolean -- 0 = baixado, 1 = Alta
+	
+	CHECK(
+		idAtendimento > 0 and
+		idQuarto > 0 and 
+		idMedico > 0
+		),
+	FOREIGN key (idAtendimento) REFERENCES atendimento(idAtendimento),
+	FOREIGN key (idQuarto) REFERENCES quartos(idQuarto),
+	FOREIGN key (idMedico) REFERENCES colaboradores(idColaborador)
+)
+
+CREATE TABLE visitas (
+	idVisita serial primary key,
+	idQuarto integer not null,
+	idPaciente integer not null,
+	idColaborador integer not null,
+	idProntuario integer not null,
+	dataVizita date DEFAULT not null,
+	horaVizita date without time zone DEFAULT not null,
+	CHECK(
+		idQuarto > 0 and
+		idPaciente  > 0 and
+		idColaborador > 0 and
+		idProntuario > 0 and
+		),
+	FOREIGN key () REFERENCES ()	
+)
+
+CREATE TABLE receitas (
+	idReceita serial primary key,	
+	idMedico integer not null,
+	idPaciente integer not null,
+	descReceita varChar (255) not null,
+	dataEmissao date not null DEFAULT = date(),
+	
+	CHECK(
+		idMedico > 0 and
+		idPaciente > 0 
+		),
+	FOREIGN key (idMedico) REFERENCES colaboradores(idColaborador)
+	FOREIGN key (idPaciente) REFERENCES pacientes(idPaciente),	
+)
+
+CREATE TABLE exames (
+	idExames serial primary key,	
+	idMedico integer not null,
+	idPaciente integer not null,
+	idEspecialidade integer not null,
+	dataSolicitacao date not null, 
+	dataValidade date not null,
+	
+	CHECK(
+		idMedico > 0 and
+		idPaciente > 0 and
+		idEspecialidade > 0 
+		),
+	FOREIGN key (idMedico) REFERENCES colaboradores(idColaborador)
+	FOREIGN key (idPaciente) REFERENCES pacientes(idPaciente),	
+	FOREIGN key (idEspecialidade) REFERENCES especialidades(idEspecialidade),
+)
+
+CREATE TABLE laboratorios (
+	idLaboratorio serial primary key,	
+	nomeLaboratorio varChar (100) not null,
+	idEspecialidade integer not null,
+	endreço varChar (150) null,
+	fone varChar (15) null,
+	credendeciado boolean -- Sim,Não
+	CHECK(
+		idEspecialidade > 0 
+		),
+	FOREIGN key (idEspecialidade) REFERENCES especialidades(idEspecialidade),
+)
+
+CREATE TABLE coletas (
+	idColetas serial primary key,CHECK(
+	idExames integer nor null,
+	dataColeta date not null,
+	statuColeta boolean -- 0 = Em aberto, 1 = Concluída
+	CHECK(
+		idExames > 0
+		),
+	FOREIGN key (idExames) REFERENCES exames(idExames)
+)
+
+CREATE TABLE materiaisColetados(
+	idMaterialColatado serial primary key,CHECK(
+	idLaboratorio integer nor null,
+	dataEnvio date not null,
+	statuColeta boolean -- 0 = Em aberto, 1 = Concluída
+	CHECK(
+		idExames > 0
+		),
+	FOREIGN key (idl) REFERENCES exames(idExames)
+)
+
+CREATE TABLE tipoUtilitarios (
+	idTipoUtilitario serial primary key,
+	nomeTipoUtilitario varChar(100) not null
+)
+
+CREATE TABLE utilitarios (
+	idUtilitarios serial primary key,	
+	nomeUtilitario varChar (100) not null,
+	idTipoUtilitario integer not null,
+	CHECK(
+		idTipoUtilitario > 0
+		),
+	FOREIGN key (idUtilitarios) REFERENCES tipoUtilitarios(idTipoUtilitario)
+)
+
+CREATE TABLE cidades (
+	idCidade serial primary key,	
+	nomeCidade varChar (200) not null,
+	uf varChar (2) not null,
+	estado VarChar (100) not null,
+	pais varChar (50) not null
+)
