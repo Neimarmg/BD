@@ -1,11 +1,19 @@
-﻿
-/*""""""""""""""""""""""""""""""""""""""""""""""""""""""""*/
+﻿CREATE TABLE material (
+	id SERIAL PRIMARY KEY,
+	nome varchar(200),
+	qtd decimal (10,2),
+	custo decimal (10,2),
+	id_marca_fk int,
+	id_tipo_fk int,
+	constraint fk_marca foreign key (id_marca_fk) references marca (id_marca),
+	constraint fk_tipo foreign key (id_tipo_fk) references tipo (id_tipo)
+);
 
-???
 
 
 INSERT INTO material 
 ???
+
 
 
 --===================<< Criação da VIEW >> ================
