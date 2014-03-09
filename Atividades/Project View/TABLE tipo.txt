@@ -1,9 +1,17 @@
 ﻿
-/*""""""""""""""""""""""""""""""""""""""""""""""""""""""""*/
 CREATE TABLE tipo (
-id_tipo SERIAL PRIMARY KEY,
-tipo varchar(100)
+	id_tipo SERIAL PRIMARY KEY,
+	tipo varchar(100)
 )
 
 INSERT INTO tipo	
+(tipo) VALUES ('Limpeza');
 
+INSERT INTO tipo	
+(tipo) VALUES ('Informática');
+
+INSERT INTO tipo	
+(tipo) VALUES ('Escritório');
+
+INSERT INTO tipo	
+(tipo) VALUES ('Cozinha');
