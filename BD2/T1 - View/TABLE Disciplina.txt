@@ -1,0 +1,8 @@
+﻿CREATE TABLE disciplina (
+
+);
+	
+	
+	
+INSERT INTO disciplina
+???

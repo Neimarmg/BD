@@ -1,0 +1,7 @@
+﻿
+--===================<< Criação da VIEW >> ================
+
+CREATE VIEW   disciplinaAlunsMatriculado (
+	SELECT ?
+	
+)
