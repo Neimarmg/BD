@@ -1,9 +1,17 @@
 ﻿create table aluno (
-	cod char(05) Primary Key,
+	cod char(05)Primary Key,
 	nome char(40),
 );
 	
 	
 	
-INSERT INTO aluno
-???
+insert into aluno (nome) values ('André');
+insert into aluno (nome) values ('Borges';
+insert into aluno (nome) values ('Carlos');
+insert into aluno (nome) values ('Diogo');
+insert into aluno (nome) values ('Elisandro');
+insert into aluno (nome) values ('Fonseca');
+insert into aluno (nome) values ('Geraldo');
+insert into aluno (nome) values ('Humberto');
+insert into aluno (nome) values ('Iolanda');
+insert into aluno (nome) values ('Jader');

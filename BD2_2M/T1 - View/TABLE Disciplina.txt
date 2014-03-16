@@ -1,8 +1,12 @@
-﻿CREATE TABLE disciplina (
-
+﻿create table disciplina (
+	cod char(03)Primary Key,
+	nome char(40),
 );
 	
 	
 	
-INSERT INTO disciplina
-???
+insert into disciplina(nome) values ('Geografia');
+insert into disciplina(nome) values ('História');
+insert into disciplina(nome) values ('Matemática');
+insert into disciplina(nome) values ('OSPB');
+insert into disciplina(nome) values ('Português');

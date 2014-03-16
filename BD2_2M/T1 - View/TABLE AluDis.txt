@@ -1,5 +1,5 @@
-﻿CREATE TABLE aluDis (
-
+﻿create table aluDis (
+	
 );
 	
 	
