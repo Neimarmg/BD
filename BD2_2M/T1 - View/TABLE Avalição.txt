@@ -1,4 +1,9 @@
-create table disciplina (
-	codDiscplina char(03)Primary Key,
-	nome char(40) NOT NULL,
+create table avaliacoes (
+	codAvaliacao char(03)Primary Key,
+	codAluDis char(40) NOT NULL,
+	nota NUMERIC NOT NULL
 );
+
+insert into avaliacoes(codAluDis,nota) values ('1','9');
+insert into avaliacoes(codAluDis,nota) values ('3','7');
+insert into avaliacoes(codAluDis,nota) values ('5','5');

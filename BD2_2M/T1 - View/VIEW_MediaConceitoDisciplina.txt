@@ -2,81 +2,15 @@
 --===================<< Criação da VIEW >> ================
 
 CREATE VIEW   mediaConceitoDisciplina AS(
-	SELECT codAluDis, aluno.nome, disciplina.nome 
-	FROM ((aluDis INNER JOIN aluno ON aluDis.codAluDis = aluno.codAluno)
-		INNER JOIN aluDis INNER JOIN disciplina ON aluDis.codDiscplina = disciplina.codDiscplina)	
+	SELECT codAluDis, aluno.nome, disciplina.nome,avaliacoes.nota, 
+	IF(avaliacoes.nota < 6,"D",
+	IF(avaliacoes.nota = 6 and avaliacoes.nota < = 7,"C",
+	IF(avaliacoes.nota > 7 and avaliacoes.nota <= 9.5,"B","A"))) AS conceitoFinal
+	
+	FROM (((aluDis INNER JOIN aluno ON aluDis.codAluDis = aluno.codAluno)
+		INNER JOIN aluDis INNER JOIN disciplina ON aluDis.codDiscplina = disciplina.codDiscplina) 
+		INNER JOIN aluDis INNER JOIN avaliacoes ON aluDis.codAluDis = avaliacoes.codAvaliacao)	
+	GROUP BY aluno.nome;
 	
 )
 
-
-
-FROM (((((itensOS INNER JOIN custos ON itensOS.idCustos = custos.idCustos)
-	INNER JOIN itensOS INNER JOIN ordenServico ON itensOS.idItesnOS = ordenServico.idOrdemServico)
-		
-	INNER JOIN itensOS ( INNER JOIN ordenServico ( clientes INNER JOIN cidades ON clientes.idCidade = cidades.idCidade) 
-	ON ordenServico.idCliente = clientes.idCliente ) ON itensOS.idOrdemServico = ordenServico.idOrdemServico)		
-	
-	INNER JOIN itensOS ( ordenServico INNER JOIN produtos ON ordenServico.idProduto = produtos.idProduto)ON 
-	itensOS.idOrdemServico = ordenServico.idOrdemServico)
-
-
-
-
-
-
-
-
-create table disciplina (
-	codDiscplina char(03)Primary Key,
-	nome char(40) NOT NULL,
-);
-	
-insert into disciplina(nome) values ('Geografia');
-insert into disciplina(nome) values ('História');
-insert into disciplina(nome) values ('Matemática');
-insert into disciplina(nome) values ('OSPB');
-insert into disciplina(nome) values ('Português');
-
-
-create table aluno (
-	codAluno char(05)Primary Key,
-	nome char(40),
-);
-	
-	
-insert into aluno (nome) values ('André');
-insert into aluno (nome) values ('Borges';
-insert into aluno (nome) values ('Carlos');
-insert into aluno (nome) values ('Diogo');
-insert into aluno (nome) values ('Elisandro');
-insert into aluno (nome) values ('Fonseca');
-insert into aluno (nome) values ('Geraldo');
-insert into aluno (nome) values ('Humberto');
-insert into aluno (nome) values ('Iolanda');
-insert into aluno (nome) values ('Jader');
-
-
-create table aluDis (
-	codAluDis char(05)Primary Key,
-	codDiscplina INTEGER NOT NULL,
-	codAluno INTEGER NOT NULL, 
-	dataMatricula DATE NOT NULL DEFAULT(CURRENT_DATE)
-	
-	CHECK (
-		codAluno > 0 and
-		codDiscplina > 0		
-	)
-	FOREIGN KEY (codDiscplina) REFERENCES Disciplina(codDiscplina),
-	FOREIGN KEY (codAluno) REFERENCES Aluna(codAluno)
-);
-	
-insert into aluDis (codDiscplina,codAluno,dataMatricula) values ('1','5','10-03-2014');
-insert into aluDis (codDiscplina,codAluno,dataMatricula) values ('2','6','11-03-2014');
-insert into aluDis (codDiscplina,codAluno,dataMatricula) values ('6','3','10-03-2014');
-insert into aluDis (codDiscplina,codAluno,dataMatricula) values ('10','5','11-03-2014');
-insert into aluDis (codDiscplina,codAluno,dataMatricula) values ('5','8','22-03-2014');
-insert into aluDis (codDiscplina,codAluno,dataMatricula) values ('5','9','03-03-2014');
-insert into aluDis (codDiscplina,codAluno,dataMatricula) values ('5','6','08-03-2014');
-insert into aluDis (codDiscplina,codAluno,dataMatricula) values ('6','8','19-03-2014');
-insert into aluDis (codDiscplina,codAluno,dataMatricula) values ('10','10','31-03-2014');
-insert into aluDis (codDiscplina,codAluno,dataMatricula) values ('6','6','01-03-2014');		
