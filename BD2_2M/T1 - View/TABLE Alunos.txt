@@ -1,8 +1,9 @@
-﻿CREATE TABLE alunos (
-
+﻿create table aluno (
+	cod char(05) Primary Key,
+	nome char(40),
 );
 	
 	
 	
-INSERT INTO alunos
+INSERT INTO aluno
 ???
