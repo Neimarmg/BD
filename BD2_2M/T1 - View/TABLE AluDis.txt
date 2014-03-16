@@ -1,8 +1,24 @@
 ﻿create table aluDis (
+	codAluDis char(05)Primary Key,
+	codDiscplina INTEGER NOT NULL,
+	codAluno INTEGER NOT NULL, 
+	dataMatricula DATE NOT NULL DEFAULT(CURRENT_DATE)
 	
+	CHECK (
+		codAluno > 0 and
+		codDiscplina > 0		
+	)
+	FOREIGN KEY (codDiscplina) REFERENCES Disciplina(codDiscplina),
+	FOREIGN KEY (codAluno) REFERENCES Aluna(codAluno)
 );
 	
-	
-	
-INSERT INTO aluDis
-???
+insert into aluDis (codDiscplina,codAluno,dataMatricula) values ('1','5','10-03-2014');
+insert into aluDis (codDiscplina,codAluno,dataMatricula) values ('2','6','11-03-2014');
+insert into aluDis (codDiscplina,codAluno,dataMatricula) values ('6','3','10-03-2014');
+insert into aluDis (codDiscplina,codAluno,dataMatricula) values ('10','5','11-03-2014');
+insert into aluDis (codDiscplina,codAluno,dataMatricula) values ('5','8','22-03-2014');
+insert into aluDis (codDiscplina,codAluno,dataMatricula) values ('5','9','03-03-2014');
+insert into aluDis (codDiscplina,codAluno,dataMatricula) values ('5','6','08-03-2014');
+insert into aluDis (codDiscplina,codAluno,dataMatricula) values ('6','8','19-03-2014');
+insert into aluDis (codDiscplina,codAluno,dataMatricula) values ('10','10','31-03-2014');
+insert into aluDis (codDiscplina,codAluno,dataMatricula) values ('6','6','01-03-2014');															

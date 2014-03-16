@@ -1,9 +1,7 @@
 ﻿create table disciplina (
-	cod char(03)Primary Key,
-	nome char(40),
+	codDiscplina char(03)Primary Key,
+	nome char(40) NOT NULL,
 );
-	
-	
 	
 insert into disciplina(nome) values ('Geografia');
 insert into disciplina(nome) values ('História');
