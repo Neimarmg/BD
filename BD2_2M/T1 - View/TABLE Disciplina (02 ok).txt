@@ -1,6 +1,6 @@
 ﻿create table disciplina (
-	codDiscplina char(03)Primary Key,
-	nome char(40) NOT NULL,
+	codDisciplina serial Primary Key,
+	nome char(40) Not Null
 );
 	
 insert into disciplina(nome) values ('Geografia');

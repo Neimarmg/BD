@@ -1,12 +1,10 @@
 ﻿create table aluno (
-	codAluno char(05)Primary Key,
-	nome char(40),
+	codAluno serial primary key,
+	nome char(40)
 );
 	
-	
-	
 insert into aluno (nome) values ('André');
-insert into aluno (nome) values ('Borges';
+insert into aluno (nome) values ('Borges');
 insert into aluno (nome) values ('Carlos');
 insert into aluno (nome) values ('Diogo');
 insert into aluno (nome) values ('Elisandro');
