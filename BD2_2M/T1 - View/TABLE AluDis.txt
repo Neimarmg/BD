@@ -1,5 +1,5 @@
 ﻿create table aluDis (
-	codAluDis char(05)PRIMARY KEY,
+	codAluDis serial primary key,
 	codDisciplina INTEGER NOT NULL,
 	codAluno INTEGER NOT NULL, 
 	dataMatricula DATE NOT NULL DEFAULT(CURRENT_DATE)
@@ -9,8 +9,8 @@
 		codDisciplina > 0		
 	)
 	
-	FOREIGN KEY (codDisciplina) REFERENCES disciplina(codDisciplina),
-	FOREIGN KEY (codAluno) REFERENCES aluno(codAluno)
+	CONSTANT FOREIGN KEY (codDisciplina) REFERENCES disciplina(codDisciplina),
+	CONSTANT FOREIGN KEY (codAluno) REFERENCES aluno(codAluno)
 );
 	
 insert into aluDis (codDisciplina,codAluno,dataMatricula) values ('1','5','10-03-2014');

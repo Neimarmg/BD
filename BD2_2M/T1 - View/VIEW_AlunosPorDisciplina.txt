@@ -1,7 +1,10 @@
 ﻿
 --===================<< Criação da VIEW >> ================
 
-CREATE VIEW   alunosPorDisciplina (
-	SELECT ?
+CREATE VIEW   alunosPorDisciplina AS(
+	SELECT disciplina.nome, COUNT(aluDis.codAluno) AS TotalDeAlunosNaDisciplina,
+	
+	FROM ((aluDis INNER JOIN disciplina ON aluDis.codDiscplina = disciplina.codDiscplina))
+	GROUP BY disciplina.nome;
 	
 )
