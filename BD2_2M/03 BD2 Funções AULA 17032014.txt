@@ -1,0 +1,99 @@
+CREATE TABLE tipo_pessoas(
+    id_tipo serial NOT NULL,
+    descricao  varchar(80),
+    CONSTRAINT tipo_pessoas_pkey PRIMARY KEY (id_tipo)); 
+
+insert into tipo_pessoas ( descricao) values ('aluno'),
+                                             ('professor'),
+                                             ('funcionario');
+
+CREATE TABLE pessoa_fisica (
+id_pessoa SERIAL,
+nome VARCHAR(80),
+sobrenome VARCHAR(200),
+sexo CHAR(1),
+cpf CHAR(11),
+PRIMARY KEY(id_pessoa),
+id_tipo integer references tipo_pessoas (id_tipo)
+);    
+  
+
+INSERT INTO PESSOA_FISICA (NOME, SOBRENOME, SEXO,CPF, id_tipo) 
+                    VALUES('JOAO','SILVA',1,'55566677788',1),
+                          ('MARIA','SOUZA',0,'11122233344',3),
+                          ('ANTONIO','CARVALHO',1,'1231112222',2);
+
+SELECT * FROM PESSOA_FISICA
+
+SELECT NOME, DESCRICAO FROM PESSOA_FISICA, TIPO_PESSOAS 
+                       WHERE   PESSOA_FISICA.ID_TIPO = TIPO_PESSOAS.ID_TIPO
+
+
+CREATE FUNCTION get_pessoas_tipo() RETURNS SETOF RECORD AS $$
+BEGIN
+RETURN QUERY SELECT NOME, DESCRICAO FROM PESSOA_FISICA, TIPO_PESSOAS 
+                       WHERE   PESSOA_FISICA.ID_TIPO = TIPO_PESSOAS.ID_TIPO;
+RETURN;
+END;
+$$ LANGUAGE 'plpgsql';
+--Chamada da Função
+SELECT * FROM get_pessoas_tipo() AS (
+nome VARCHAR(80),
+descricao  varchar(80)
+)
+CREATE FUNCTION get_pessoas_tipo_nome(varchar) RETURNS SETOF RECORD AS $$
+BEGIN
+RETURN QUERY SELECT NOME, DESCRICAO FROM PESSOA_FISICA, TIPO_PESSOAS 
+                       WHERE   PESSOA_FISICA.ID_TIPO = TIPO_PESSOAS.ID_TIPO
+                               and nome=$1;
+RETURN;
+END;
+
+SELECT * FROM get_pessoas_tipo_Nome('JOAO') AS (
+nome VARCHAR(80),
+descricao  varchar(80)
+)
+
+
+--2) RETORNANDO OS CAMPOS DE UMA DADA TABELA
+--Quando o retorno da função forem oriundos de apenas uma tabela, pode-se setar o tipo de retorno como sendo exatamente o da tabela trabalhada:
+--Definindo pessoa_fisica, como o tipo de retorno:
+
+-- função que retorna as pessoas tipo aluno  id_tipo=1
+
+CREATE or replace FUNCTION get_pessoas_alunos() RETURNS SETOF pessoa_fisica AS $$
+BEGIN
+RETURN QUERY SELECT * FROM pessoa_fisica where id_tipo = 1 ;
+RETURN;
+END;
+$$ LANGUAGE 'plpgsql'
+
+drop function blog_get_pessoas2()
+
+select * from pessoa_fisica where id_tipo =1;
+SELECT * FROM get_pessoas_alunos();
+
+--3) TIPO DE RETORNO  ==> RETURNS TABLE
+
+CREATE or replace FUNCTION blog_get_pessoas3() RETURNS TABLE (
+nome VARCHAR (80),
+descrição VARCHAR (80),
+sexo CHAR) AS $$
+BEGIN
+RETURN QUERY SELECT pessoa_fisica.NOME, tipo_pessoas.DESCRICAO, pessoa_fisica.sexo
+             FROM PESSOA_FISICA, TIPO_PESSOAS 
+             WHERE   PESSOA_FISICA.ID_TIPO = TIPO_PESSOAS.ID_TIPO;
+RETURN;
+END;
+$$ LANGUAGE 'plpgsql'
+SELECT * FROM blog_get_pessoas3();
+
+
+
+
+
+
+
+
+
+                          
