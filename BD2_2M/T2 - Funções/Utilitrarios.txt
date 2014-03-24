@@ -1,0 +1,15 @@
+﻿		
+CREATE TABLE utilitarios (
+	idUtilitarios serial primary key,	
+	nomeUtilitario varChar (100) not null,
+	idTipoUtilitario integer not null,
+	CHECK(
+		idTipoUtilitario > 0
+		),
+	CONSTANT FOREIGN key (idUtilitarios) REFERENCES tipoUtilitarios(idTipoUtilitario);
+)
+INSERT INTO utilitarios
+(idUtilitarios, nomeUtilitario, idTipoUtilitario)VALUE
+(1, '', );
+
+

@@ -1,0 +1,10 @@
+﻿--====================================================================
+CREATE TABLE tipoUtilitarios (
+	idTipoUtilitario serial primary key,
+	nomeTipoUtilitario varChar(100) not null
+)
+INSERT INTO tipoUtilitarios 
+(idTipoUtilitario, nomeTipoUtilitario) VALUE 
+(1, '?');  
+
+		
