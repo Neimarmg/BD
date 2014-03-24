@@ -1,15 +1,18 @@
 ﻿		
 CREATE TABLE utilitarios (
 	idUtilitarios serial primary key,	
-	nomeUtilitario varChar (100) not null,
-	idTipoUtilitario integer not null,
+	nomeUtilitario varChar (100) null,
+	idTipoUtilitario integer null,
 	CHECK(
 		idTipoUtilitario > 0
 		),
 	CONSTANT FOREIGN key (idUtilitarios) REFERENCES tipoUtilitarios(idTipoUtilitario);
 )
 INSERT INTO utilitarios
-(idUtilitarios, nomeUtilitario, idTipoUtilitario)VALUE
-(1, '', );
-
+(nomeUtilitario, idTipoUtilitario)VALUE
+('lapis',1 );
+('caneta',1 );
+('big',2 );
+('faber castel',2);
+('pimaco',2 );
 
