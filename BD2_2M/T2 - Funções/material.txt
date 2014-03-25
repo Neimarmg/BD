@@ -1,11 +1,11 @@
 ﻿CREATE TABLE material (
-	id SERIAL PRIMARY KEY,
+	idMaterial SERIAL PRIMARY KEY,
 	nome VARCHAR(200),
 	qtd DECIMAL (10,2),
 	custo DECIMAL (10,2),
 	idMarca INTEGER,
 	idTipo INTEGER,
-	CONSTANT fk_marca FOREIGN KEY (idMarca) REFERENCES marca (id_marca),
+	CONSTANT fk_marca FOREIGN KEY (idMarca) REFERENCES utilitarios (idUtilitarios)
 	CONSTANT fk_tipo FOREIGN KEY (idTipo) REFERENCES utilitarios (idUtilitarios)
 );
 
@@ -15,4 +15,10 @@ INSERT INTO material (nome, qtd, custo, idMarca, idTipo)VALUE
 ('CANETA ESFEROGRAGICA',10,3,00,,);
 ('CANETA PONTA FINA',10,2,50,,);
 
---===================<< Criação da VIEW >> ================
+
+
+
+
+
+
+

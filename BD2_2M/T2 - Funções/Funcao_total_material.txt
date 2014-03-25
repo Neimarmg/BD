@@ -1,0 +1,24 @@
+﻿
+CREATE FUNCTION get_tot_material() RETURNS SETOF RECORD AS $$
+BEGIN
+RETURN QUERY 
+	SELECT 
+		material.nome, 
+		utilitarios.nomeUtilitario AS Tipo,
+		utilitarios.nomeUtilitario AS Marca ,
+		intensNF.qtd,
+		SUM(intensNF.qtd * material.custo) AS CustoTotal
+		
+	FROM material, idItensNf, utilitarios
+	WHERE idItensNf.idNf = notaFiscal.idNf;
+RETURN;
+END;
+$$ LANGUAGE 'plpgsql';
+
+--Chamada da Função
+SELECT * FROM get_tot_material() AS (
+	nome VARCHAR(255),
+	idMarca INTEGER,
+	idTipo INTEGER,
+	qtd INTEGER
+)

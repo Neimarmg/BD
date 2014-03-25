@@ -41,6 +41,7 @@ SELECT * FROM get_pessoas_tipo() AS (
 nome VARCHAR(80),
 descricao  varchar(80)
 )
+
 CREATE FUNCTION get_pessoas_tipo_nome(varchar) RETURNS SETOF RECORD AS $$
 BEGIN
 RETURN QUERY SELECT NOME, DESCRICAO FROM PESSOA_FISICA, TIPO_PESSOAS 

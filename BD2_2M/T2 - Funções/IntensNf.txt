@@ -1,0 +1,14 @@
+﻿CREATE TABLE intensNF (
+	idItensNf SERIAL PRIMARY KEY,
+	idMaterial INTEGER NOT NULL,
+	qtd VARCHAR(200),
+	custo DECIMAL (10,2),
+	
+	CONSTANT FOREIGN KEY (idMaterial) REFERENCES material (idMaterial)
+)
+
+INSERT INTO material (idMaterial, qtd, custo)VALUE
+(1,5,1);
+(1,4,5);
+(1,2,9);
+(1,4,3);

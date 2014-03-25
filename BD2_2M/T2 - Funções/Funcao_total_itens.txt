@@ -1,0 +1,21 @@
+﻿CREATE FUNCTION get_tot_item() RETURNS SETOF RECORD AS $$
+BEGIN
+RETURN QUERY 
+	SELECT 
+		material.nome, 
+		utilitarios.nomeUtilitario AS Tipo,
+		utilitarios.nomeUtilitario AS Marca 
+		intensNF.qtd as TotalItens
+		
+	FROM material, idItensNf, utilitarios
+	WHERE idItensNf.idNf = notaFiscal.idNf;
+RETURN;
+END;
+$$ LANGUAGE 'plpgsql';
+
+--Chamada da Função
+SELECT * FROM get_tot_item() AS (
+	nome VARCHAR(255),
+	idMarca INTEGER,
+	idTipo INTEGER
+)
