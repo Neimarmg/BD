@@ -1,0 +1,55 @@
+CREATE TABLE usuario (
+id integer NOT NULL,
+nm_login character varying,
+ds_senha character varying,
+fg_bloqueado boolean,
+nu_tentativa_login integer,
+CONSTRAINT pk_usuario PRIMARY KEY (id)
+);
+
+
+INSERT INTO usuario values(1, 'hallan', 'hallan2011','false',0);
+INSERT INTO usuario values(2, 'joao', '123456','false',0);
+INSERT INTO usuario values(3, 'maria', 'abcd1234','false',2);
+select * from usuario;
+
+CREATE OR REPLACE FUNCTION login ( VARCHAR, VARCHAR )
+RETURNS varchar  AS
+$$
+DECLARE
+registro RECORD;
+tentativas INTEGER;
+msg varchar(30);
+BEGIN
+SELECT INTO registro id, fg_bloqueado, nu_tentativa_login FROM usuario
+WHERE nm_login = $1 AND ds_senha = $2;
+IF registro IS NULL -- Não encontrou Login nem senha correspondente
+THEN
+SELECT INTO tentativas nu_tentativa_login FROM usuario
+WHERE nm_login = $1;
+tentativas := tentativas + 1;
+IF tentativas > 2 -- verifica numero de tentativas
+THEN
+UPDATE usuario SET nu_tentativa_login = tentativas,
+fg_bloqueado = TRUE where nm_login = $1;
+msg := 'usuario Bloqueado';
+return (msg); 
+ELSE
+UPDATE usuario SET nu_tentativa_login = tentativas
+where nm_login = $1;
+msg := 'tentativa invalida '||tentativas;
+return (msg);
+END IF;
+ELSE --Encontrou Login e senha correspondente
+UPDATE usuario SET nu_tentativa_login = 0 where nm_login = $1;
+msg:='ok';
+return (msg); 
+END IF;
+END;
+$$
+LANGUAGE 'plpgsql';
+
+SELECT login( 'hallan', 'senha_errada' );
+select login('joao','123456');
+SELECT login( 'maria', 'abcd' );
+                                  

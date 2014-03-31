@@ -1,0 +1,42 @@
+create table nfs( 
+idnf serial Primary Key, 
+numnf integer not null,
+datanf date not null);
+
+create table intensNf(
+iditensnf serial primary Key, 
+idnf integer references nfs(idnf), 
+idMaterial integer, 
+qtd decimal (10,2),
+valor decimal(10,2));
+
+
+insert into nfs (numnf,datanf) 
+         values (21344,'2014-03-31'),
+                (21345,'2014-03-31');
+select * from nfs
+insert into intensNf (idnf,idmaterial, qtd, valor)
+            values  (1, 5371,1,10),
+                    (1,21453,3,25.5),
+                    (1,121,2,4) 
+
+select SUM(qtd*valor) as "Total NF" 
+                      from Nfs, IntensNf 
+                      where intensnf.idnf = nfs.idnf and
+                      nfs.numnf = 21344;
+
+CREATE OR REPLACE FUNCTION totalNF( integer ) 
+          RETURNS decimal(10,2) AS
+$$
+DECLARE
+totalNF decimal(10,2);
+BEGIN
+SELECT INTO totalNF SUM(qtd*valor)  
+                      from Nfs, IntensNf 
+                      where nfs.numnf = $1 and 
+                      intensnf.idnf = nfs.idnf ; 
+RETURN totalNF;
+END;
+$$ LANGUAGE 'plpgsql';                      
+
+select totalNF(21344) as "Total NF"
