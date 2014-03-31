@@ -1,10 +1,9 @@
-﻿--====================================================================
-CREATE TABLE tipoUtilitarios (
+﻿CREATE TABLE tipoUtilitarios (
 	idTipoUtilitario serial primary key,
 	nomeTipoUtilitario varChar(100) not null
 )
-INSERT INTO tipoUtilitarios 
-(nomeTipoUtilitario) VALUE 
-('Tipo Material');  
-('Marca'); 
-		
+
+INSERT INTO tipoUtilitarios
+		(nomeTipoUtilitario) VALUES 
+			('Tipo Material'),
+			('Marca');
