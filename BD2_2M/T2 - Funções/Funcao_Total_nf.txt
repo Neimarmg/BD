@@ -1,15 +1,20 @@
 ﻿
-CREATE FUNCTION get_tot_NF() RETURNS SETOF RECORD AS $$
-BEGIN
-RETURN QUERY SELECT SUM(intensNF.qtd * material.custo) AS Custo
-	FROM material, idItensNf 
-    WHERE idItensNf.idNf = notaFiscal.idNf;
-RETURN;
-END;
+CREATE OR REPLACE FUNCTION get_tot_NF(INTEGER) 
+	RETURNS integer AS $$
+	DECLARE get_tot_NF integer;
+	BEGIN
+		SELECT SUM(intensNF.qtd * material.custo) AS "Custo"
+		
+		FROM material, idItensNf 
+		WHERE idItensNf.idNf = $1 AND notaFiscal.idNf;
+		
+		RETURN get_tot_NF;
+	END;
 $$ LANGUAGE 'plpgsql';
 
 --Chamada da Função
 SELECT * FROM get_tot_NF() AS (
 	Custo DECIMAL(10,2);
 )
+
 

@@ -6,13 +6,11 @@ CREATE TABLE utilitarios (
 	CHECK(
 		idTipoUtilitario > 0
 		),
-	CONSTANT FOREIGN key (idUtilitarios) REFERENCES tipoUtilitarios(idTipoUtilitario);
+	CONSTRAINTS FOREIGN key (idUtilitarios) REFERENCES tipoUtilitarios(idTipoUtilitario)
 )
-INSERT INTO utilitarios
-(nomeUtilitario, idTipoUtilitario)VALUE
-('lapis',1 );
-('caneta',1 );
-('big',2 );
-('faber castel',2);
-('pimaco',2 );
+INSERT INTO utilitarios (nomeUtilitario, idTipoUtilitario) VALUES ('lapis',1 ),
+																('caneta',1 ),
+																('big',2 ),
+																('faber castel',2),
+																('pimaco',2 );
 

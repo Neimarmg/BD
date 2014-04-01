@@ -3,7 +3,5 @@
 	nomeTipoUtilitario varChar(100) not null
 )
 
-INSERT INTO tipoUtilitarios
-		(nomeTipoUtilitario) VALUES 
-			('Tipo Material'),
-			('Marca');
+INSERT INTO tipoUtilitarios (nomeTipoUtilitario) VALUES ('Tipo Material'),
+														('Marca');

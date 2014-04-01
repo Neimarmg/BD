@@ -5,15 +5,14 @@
 	custo DECIMAL (10,2),
 	idMarca INTEGER,
 	idTipo INTEGER,
-	CONSTANT fk_marca FOREIGN KEY (idMarca) REFERENCES utilitarios (idUtilitarios)
-	CONSTANT fk_tipo FOREIGN KEY (idTipo) REFERENCES utilitarios (idUtilitarios)
+	CONSTRAINTS fk_marca FOREIGN KEY (idMarca) REFERENCES utilitarios (idUtilitarios)
+	CONSTRAINTS fk_tipo FOREIGN KEY (idTipo) REFERENCES utilitarios (idUtilitarios)
 );
 
-INSERT INTO material (nome, qtd, custo, idMarca, idTipo)VALUE
-('LAPIS GRAFFIT',10,1,00,,);
-('LAPIS DE COR',10,1,50,,);
-('CANETA ESFEROGRAGICA',10,3,00,,);
-('CANETA PONTA FINA',10,2,50,,);
+INSERT INTO material (nome, qtd, custo, idMarca, idTipo) VALUES ('LAPIS GRAFFIT',10,1,00,,);
+																('LAPIS DE COR',10,1,50,,);
+																('CANETA ESFEROGRAGICA',10,3,00,,);
+																('CANETA PONTA FINA',10,2,50,,);
 
 
 
