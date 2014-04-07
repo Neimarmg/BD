@@ -1,0 +1,69 @@
+﻿CREATE TABLE pessoa_fisica (
+	id_pessoa SERIAL,
+	nome VARCHAR(80),
+	sobrenome VARCHAR(200),
+	sexo CHAR(1),
+	cpf CHAR(11),
+	PRIMARY KEY(id_pessoa)
+);
+
+ALTER  TABLE pessoa_fisica  ADD salario decimal (10,2);
+
+INSERT INTO PESSOA_FISICA (NOME, SOBRENOME, SEXO,CPF) VALUES('JOAO','SILVA',1,'55566677788',1000);
+INSERT INTO PESSOA_FISICA (NOME, SOBRENOME, SEXO,CPF) VALUES('MARIA','SOUZA',0,'11122233344',1500);
+INSERT INTO PESSOA_FISICA (NOME, SOBRENOME, SEXO,CPF) VALUES('PEDRAO','SOUZA',0,'11122233344',500);
+INSERT INTO PESSOA_FISICA (NOME, SOBRENOME, SEXO,CPF) VALUES('CLARA','UZA',0,'11122233344',600);
+
+
+CREATE TABLE depatatamento (
+	id_Depatamento SERIAL,
+	nomeDepartamento VARCHAR(80),
+	PRIMARY KEY(id_Depatamento)
+);
+
+
+INSERT INTO depatatamento (nomeDepartamento) VALUES ('SECRETARIOS');
+INSERT INTO depatatamento (nomeDepartamento) VALUES ('FACHINEIROS');
+INSERT INTO depatatamento (nomeDepartamento) VALUES ('LETRADOS');
+INSERT INTO depatatamento (nomeDepartamento) VALUES ('SUPERINTEDENTES');
+INSERT INTO depatatamento (nomeDepartamento) VALUES ('CACIQUES');
+ 
+
+CREATE TABLE funcao(
+	id_funcoa SERIAL,
+	nomeFuncao VARCHAR(80),
+	PRIMARY KEY(id_funcoa )
+);
+
+INSERT INTO funcao (nomeFuncao) VALUES ('PROFESSOR');
+INSERT INTO funcao (nomeFuncao) VALUES ('GAITEIRO');
+INSERT INTO funcao (nomeFuncao) VALUES ('TOCADOR');
+INSERT INTO funcao (nomeFuncao) VALUES ('ATENDENTES');
+INSERT INTO funcao (nomeFuncao) VALUES ('TELEFONISTAS');
+ 
+--=============================================================================
+
+
+
+CREATE OR REPLACE FUNCTION get_totalSalario(integer)
+	RETURNS decimal AS $$
+
+	DECLARE totalSalario decimal(10,2);
+
+	BEGIN
+		SELECT into totalSalario SUM(pessoa_fisica.salario)
+		
+		FROM pessoa_fisica
+		WHERE pessoa_fisica.id_pessoa = $1;
+		
+		RETURN totalSalario;
+	END;
+$$ LANGUAGE 'plpgsql';
+
+
+SELECT get_totalSalario(2);
+
+DROP FUNCTION get_totalSalario(integer)
+
+
+SELECT * from pessoa_fisica 

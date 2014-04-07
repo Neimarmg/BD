@@ -1,0 +1,84 @@
+drop table pessoa_fisica
+
+CREATE TABLE pessoa_fisica (
+id_pessoa SERIAL,
+nome VARCHAR(80),
+sobrenome VARCHAR(200),
+sexo CHAR(1),
+cpf CHAR(11),
+PRIMARY KEY(id_pessoa)
+);
+INSERT INTO PESSOA_FISICA (NOME, SOBRENOME, SEXO,CPF) VALUES('JOAO','SILVA',1,'55566677788');
+INSERT INTO PESSOA_FISICA (NOME, SOBRENOME, SEXO,CPF) VALUES('MARIA','SOUZA',0,'11122233344');
+
+
+create Table departamentos(
+idDepto int primary Key,
+Depto varchar(30));
+
+insert into departamentos values (1,'rh'),(2,'progamacao');
+
+create Table funcoes(
+idFuncao int primary Key,
+funcao varchar(30));
+
+insert into funcoes values(1,'programador'),(2,'estagiário');
+
+Alter table pessoa_fisica 
+add Column idDepto integer references departamentos(idDepto), 
+add Column idFuncao integer  references funcoes(idFuncao),
+add column salario decimal (10,2) check (salario> 0);
+
+update pessoa_fisica set iddepto = 1,
+                         idfuncao = 1,
+                         salario = 700
+                         where id_pessoa = 1;
+
+update pessoa_fisica set iddepto = 2,
+                         idfuncao = 2,
+                         salario = 1000
+                         where id_pessoa = 2;
+
+select * from pessoa_fisica, departamentos 
+         where pessoa_fisica.iddepto = departamentos.iddepto; 
+
+select depto, sum(salario) from pessoa_fisica, departamentos 
+         where pessoa_fisica.iddepto = departamentos.iddepto AND
+               departamentos.iddepto = 1 group by depto
+               
+
+-- Função que retorna só o total dos salarios de um departamento 
+
+CREATE or replace FUNCTION Tot_salario_depto1 (integer) RETURNS decimal (10,2) AS 
+$$
+DECLARE
+tot_sal decimal(10,2);
+BEGIN
+SELECT INTO tot_sal sum(salario) from pessoa_fisica, departamentos 
+         where pessoa_fisica.iddepto = departamentos.iddepto AND
+               departamentos.iddepto = $1;
+RETURN tot_sal;
+END;
+$$ LANGUAGE 'plpgsql';
+
+select Tot_salario_depto1 (1)
+
+drop function tot_salario_depto(integer);
+
+--função que retorna 2 valores (Nome do Departamento e Total Salario) 
+
+CREATE FUNCTION Tot_salario_depto (integer) RETURNS TABLE (
+depto varchar ,
+tot_salario decimal(10,2)) AS $$
+BEGIN
+RETURN QUERY select departamentos.depto, sum(salario) from pessoa_fisica, departamentos 
+         where pessoa_fisica.iddepto = departamentos.iddepto AND
+               departamentos.iddepto = $1 group by departamentos.depto;
+RETURN;
+END;
+$$ LANGUAGE 'plpgsql';
+
+select tot_salario_depto(1); 
+               
+
+
