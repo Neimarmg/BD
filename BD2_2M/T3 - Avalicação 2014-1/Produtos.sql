@@ -4,7 +4,8 @@ CREATE TABLE produtos {
 	unidade INTEGER, 
 	quantidade INTEGER NOT NULL, 
 	preco_unitario DOUBLE, 
-	estoque_minimo INTEGER
+	estoque_minimo INTEGER,
+	estoque_maximo INTEGER UNIQUE
 )
 
 SELECT * produtos;
