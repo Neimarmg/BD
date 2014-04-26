@@ -1,4 +1,4 @@
-CREATE TABLE Itens_venda {
+CREATE TABLE vendas_itens {
 	codigo_item serial PRIMARY KEY, 
 	codigo_venda INTEGER, 
 	codigo_produto INTEGER, 
