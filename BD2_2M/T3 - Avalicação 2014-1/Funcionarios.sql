@@ -1,18 +1,22 @@
-CREATE TABLE funcionarios {
-	idFuncionario serial PRIMARY KEY, 
-	nomeCliente VARCHAR (50) not null,
-	cpf VARCHAR (20),
-	telefone VARCHAR (15),
-	idCidade INTEGER not null,
-	endereco VARCHAR (100) NOT NULL,
-	cep VARCHAR (100),
-	data_cadastro DATE,
+CREATE TABLE funcionarios (
+	
+	idFuncionario serial PRIMARY KEY,
+	cpf VARCHAR(20),
+	nome VARCHAR(50) NOT NULL,
+	endereco VARCHAR(100) NOT NULL,
+	idCidade INTEGER NULL,
+	uf VARCHAR(02) NOT NULL,
+	cep VARCHAR(09),
+	telefone VARCHAR(15),
+	data_admissao DATE,
 	data_nascimento DATE
 
-	CHECK(	
+	CHECK (	
 		idCidade > 0
-	),	
+	),
+	
 	CONSTRAINTS fk_funcionarios FOREIGN KEY (idCidade) REFERENCES cidades(idCidade)
+	
 )
 
 SELECT * funcionarios;
