@@ -12,10 +12,7 @@ CREATE TABLE funcionarios (
 	data_nascimento DATE
 
 	CHECK (	
-		idCidade > 0
-	),
-	
-	CONSTRAINTS fk_funcionarios FOREIGN KEY (idCidade) REFERENCES cidades(idCidade)
+		idCidade > 0)
 	
 )
 
