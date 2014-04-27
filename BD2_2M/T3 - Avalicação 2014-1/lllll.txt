@@ -44,22 +44,43 @@ SELECT * produtos;
 
 ALTER TABLE produtos ALTER column quantidade type NUMERIC;
 
+CREATE TABLE clientes (
+	
+	idCliente serial PRIMARY KEY, 
+	cpf VARCHAR(20),
+	nome VARCHAR(50) NOT NULL,
+	endereco VARCHAR(100) NOT NULL,
+	idCidade INTEGER NOT NULL,
+	uf VARCHAR(02) NOT NULL,
+	cep VARCHAR(100),
+	telefone VARCHAR(15),
+	data_cadastro DATE,
+	data_nascimento DATE
+
+	CHECK (	
+		idCidade > 0
+	),
+	
+	CONSTRAINTS fk_clientes FOREIGN KEY (idCidade) REFERENCES cidades(idCidade)
+	
+)
+
+SELECT * clientes;
 
 -- Exe 11
-CREATE or replace FUNCTION get_produto_mais_carro() RETURNS TABLE (
-nomeProduto VARCHAR (15),
-preco DOUBLE (10,2)) AS $$
+CREATE or replace FUNCTION get_cliente_mais_atigo() RETURNS TABLE (
+nome VARCHAR (15),
+data_cadastro DATE) AS $$
 BEGIN
 RETURN 
 	QUERY SELECT INTO
-		produtos.nome, 
-		produtos.preco_unitario
-		FROM produtos 
-        WHERE produtos.preco_unitario > 1000;
+		clientes.nome,
+		MAX(clientes.data_cadastro)
+		FROM clientes        
 RETURN;
 END;
 $$ LANGUAGE 'plpgsql'
 
 
-SELECT * FROM blog_get_pessoas3();
+SELECT * FROM get_cliente_mais_atigo();
 
