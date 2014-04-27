@@ -9,7 +9,7 @@ RETURN
 		MAX(produtos.preco_unitario)
 		FROM produtos 
         
-RETURN;
+RETURN $$;
 END;
 $$ LANGUAGE 'plpgsql'
 

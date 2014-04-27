@@ -10,7 +10,7 @@ RETURN
 		SUM((vendas_itens.quantidade_item * produtos.preco_unitario)*bonus.bonus/100)) AS Bonus_Total_Clinte
 		FROM vendas, bonus, vendas_itens, produtos 
         WHERE vendas.cpf_cliente = bonus.cpf_cliente;
-RETURN;
+RETURN $$;
 END;
 $$ LANGUAGE 'plpgsql'
 

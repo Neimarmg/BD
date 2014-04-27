@@ -11,7 +11,7 @@ RETURN
 		clientes.nome,
 		MIN(clientes.data_cadastro)
 		FROM clientes        
-RETURN;
+RETURN $$;
 END;
 $$ LANGUAGE 'plpgsql'
 
