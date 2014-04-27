@@ -11,12 +11,8 @@ CREATE TABLE clientes (
 	data_cadastro DATE,
 	data_nascimento DATE
 
-	CHECK (	
-		idCidade > 0
-	),
-	
-	CONSTRAINTS fk_clientes FOREIGN KEY (idCidade) REFERENCES cidades(idCidade)
-	
-)
+	CHECK (idCidade > 0)
+
+);
 
 SELECT * clientes;
