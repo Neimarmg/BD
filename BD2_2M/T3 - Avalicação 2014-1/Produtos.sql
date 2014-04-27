@@ -11,3 +11,5 @@ CREATE TABLE produtos (
 )
 
 SELECT * produtos;
+
+ALTER TABLE produtos ALTER column quantidade type NUMERIC (12,2);
