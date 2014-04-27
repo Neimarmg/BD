@@ -45,29 +45,21 @@ SELECT * produtos;
 ALTER TABLE produtos ALTER column quantidade type NUMERIC;
 
 
--- Exe 9
-CREATE VIEW cliente_bonus AS (
-	SELECT 
-		vendas.cpf_cliente, 
-		bonus.codigo_bonus,
-		SUM((vendas_itens.quantidade_item * produtos.preco_unitario)*bonus.bonus/100)) AS Bonus_Total_Clinte
-	
-	FROM (((vendas_itens INNER JOIN produtos ON vendas_itens.codigo_produto = produtos.idProduto)) and
-		(vendas_itens INNER JOIN codigo_venda ON vendas_itens.codigo_venda = vendas.codigo_venda)) and
-		INNER JOIN vendas ( vendas INNER JOIN bonus ON vendas.cpf_cliente = bonus.cpf_cliente) ON vendas_itens.codigo_venda = vendas.codigo_venda
-	
-	GROUP BY vendas.cpf_cliente;
-)
+-- Exe 11
+CREATE or replace FUNCTION get_produto_mais_carro() RETURNS TABLE (
+nomeProduto VARCHAR (15),
+preco DOUBLE (10,2)) AS $$
+BEGIN
+RETURN 
+	QUERY SELECT INTO
+		produtos.nome, 
+		produtos.preco_unitario
+		FROM produtos 
+        WHERE produtos.preco_unitario > 1000;
+RETURN;
+END;
+$$ LANGUAGE 'plpgsql'
 
 
--- Exe 20
-CREATE VIEW vendasDoCliente AS (
-	SELECT 
-		vendas.cpf_cliente, 
-		SUM((vendas_itens.quantidade_item * produtos.preco_unitario)) AS Total_venda_do_cliente
-	
-	FROM (vendas_itens INNER JOIN produtos ON vendas_itens.codigo_produto = produtos.idProduto) 
-		and vendas_itens INNER JOIN codigo_venda ON vendas_itens.codigo_venda = vendas.codigo_venda
-	
-	GROUP BY vendas.cpf_cliente;
-)
+SELECT * FROM blog_get_pessoas3();
+
