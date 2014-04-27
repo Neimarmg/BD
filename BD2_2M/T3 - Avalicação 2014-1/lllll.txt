@@ -1,0 +1,73 @@
+﻿CREATE TABLE vendas_itens {
+	codigo_item serial PRIMARY KEY, 
+	codigo_venda INTEGER, 
+	codigo_produto INTEGER, 
+	quantidade_item INTEGER
+)
+
+SELECT * Itens_venda;
+
+
+CREATE TABLE vendas {
+	idVenda serial PRIMARY KEY, 
+	data_venda DATE, 
+	cpf_cliente VARCHAR, 
+	cpf_funcionario VARCHAR
+)
+
+SELECT * vendas;
+
+
+CREATE TABLE bonus {
+	codigo_bonus serial PRIMARY KEY, 
+	codigo_bonus INTEGER, 
+	cpf_cliente INTEGER, 
+	codigo_venda INTEGER, 
+	bonus DOUBLE
+)
+
+SELECT * bonus;
+
+CREATE TABLE produtos (
+
+	idProduto serial PRIMARY KEY, 
+	nome VARCHAR(50) UNIQUE NOT NULL,
+	unidade INTEGER, 
+	quantidade INTEGER NOT NULL, 
+	preco_unitario DOUBLE, 
+	estoque_minimo INTEGER,
+	estoque_maximo INTEGER UNIQUE
+	
+)
+
+SELECT * produtos;
+
+ALTER TABLE produtos ALTER column quantidade type NUMERIC;
+
+
+-- Exe 9
+CREATE VIEW cliente_bonus AS (
+	SELECT 
+		vendas.cpf_cliente, 
+		bonus.codigo_bonus,
+		SUM((vendas_itens.quantidade_item * produtos.preco_unitario)*bonus.bonus/100)) AS Bonus_Total_Clinte
+	
+	FROM (((vendas_itens INNER JOIN produtos ON vendas_itens.codigo_produto = produtos.idProduto)) and
+		(vendas_itens INNER JOIN codigo_venda ON vendas_itens.codigo_venda = vendas.codigo_venda)) and
+		INNER JOIN vendas ( vendas INNER JOIN bonus ON vendas.cpf_cliente = bonus.cpf_cliente) ON vendas_itens.codigo_venda = vendas.codigo_venda
+	
+	GROUP BY vendas.cpf_cliente;
+)
+
+
+-- Exe 20
+CREATE VIEW vendasDoCliente AS (
+	SELECT 
+		vendas.cpf_cliente, 
+		SUM((vendas_itens.quantidade_item * produtos.preco_unitario)) AS Total_venda_do_cliente
+	
+	FROM (vendas_itens INNER JOIN produtos ON vendas_itens.codigo_produto = produtos.idProduto) 
+		and vendas_itens INNER JOIN codigo_venda ON vendas_itens.codigo_venda = vendas.codigo_venda
+	
+	GROUP BY vendas.cpf_cliente;
+)
