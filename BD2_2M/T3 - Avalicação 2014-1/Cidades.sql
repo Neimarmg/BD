@@ -1,7 +1,9 @@
 CREATE TABLE cidades (
-	idCidade serial primary key,	
-	nomeCidade varChar (200) not null,
-	idUf integer not null,
-	estado VarChar (100) not null,
-	pais varChar (50) not null
+
+	idCidade serial PRIMARY KEY,	
+	nomeCidade VARCHAR(200) NOT NULL,
+	idUf INTEGER NOT NULL,
+	estado VARCHAR (100) NOT NULL,
+	pais VARCHAR(50) NOT NULL
+	
 )
