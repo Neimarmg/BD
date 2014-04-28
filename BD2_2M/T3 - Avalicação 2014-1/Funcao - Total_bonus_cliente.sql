@@ -2,7 +2,7 @@
 
 CREATE or replace FUNCTION get_total_bonus() RETURNS TABLE (
 cpf VARCHAR (15),
-TotalBonus DOUBLE (10,2)) AS $$
+TotalBonus DOUBLE PRECISION (10,2)) AS $$
 BEGIN
 RETURN 
 	QUERY SELECT INTO 
