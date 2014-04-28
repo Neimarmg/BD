@@ -6,3 +6,8 @@ CREATE TABLE comissoes (
 	comissao DOUBLE PRECISION
 	
 )
+
+INSERT INTO (cpf_funcionario, codigo_venda, comissao) VALUES 
+(121, 10,0);
+(545, 2,0);
+(124, 15,0);

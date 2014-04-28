@@ -7,3 +7,11 @@ CREATE TABLE cidades (
 	pais VARCHAR(50) NOT NULL
 	
 )
+
+SELECT * cidades
+
+INSERT INTO cidades
+(idCidade, nomeCidade , uf , estado , pais) Values 
+											(1, 'Porto alegre' , 'rs' , 'rio grande do sul' , 'Brasil');
+											(2, 'Canoas' , 'rs' , 'rio grande do sul' , 'Brasil');
+											(3, 'Viamão' , 'rs' , 'rio grande do sul' , 'Brasil');
