@@ -14,5 +14,7 @@ CREATE TABLE clientes (
 	CHECK (idCidade > 0)
 
 );
+ALTER TABLE clientes DROP COLUMN idCidade;
+ALTER TABLE clientes ADD COLUMN nomeclientes_pk INTEGER;
 
 SELECT * clientes;

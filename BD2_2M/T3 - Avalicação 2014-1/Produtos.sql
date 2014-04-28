@@ -8,8 +8,10 @@ CREATE TABLE produtos (
 	estoque_minimo INTEGER,
 	estoque_maximo INTEGER UNIQUE
 	
+	CHECK (estoque_minimo > 0)
 )
 
 SELECT * produtos;
 
 ALTER TABLE produtos ALTER column quantidade type NUMERIC (12,2);
+ALTER TABLE produtos ALTER column  preco_unitario typ INTEGER NOT NULL;
