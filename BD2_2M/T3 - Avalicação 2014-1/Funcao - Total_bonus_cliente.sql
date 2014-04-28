@@ -1,5 +1,5 @@
-﻿
--- Exe 11
+﻿-- Exe 11
+
 CREATE or replace FUNCTION get_total_bonus() RETURNS TABLE (
 cpf VARCHAR (15),
 TotalBonus DOUBLE (10,2)) AS $$
@@ -14,6 +14,4 @@ RETURN $$;
 END;
 $$ LANGUAGE 'plpgsql'
 
-
 SELECT * FROM get_total_bonus();
-

@@ -14,5 +14,4 @@ RETURN $$;
 END;
 $$ LANGUAGE 'plpgsql'
 
-
 SELECT * FROM get_produto_mais_barrato();

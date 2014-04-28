@@ -1,4 +1,5 @@
 -- Exe 19
+
 CREATE or replace FUNCTION get_produto_mais_vendido() RETURNS TABLE (
 cod INTEGER,
 nome VARCHAR (15),
@@ -13,6 +14,5 @@ RETURN
 RETURN $$;
 END;
 $$ LANGUAGE 'plpgsql'
-
 
 SELECT * FROM get_produto_mais_vendido();

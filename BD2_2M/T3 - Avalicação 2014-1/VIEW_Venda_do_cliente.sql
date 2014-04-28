@@ -1,5 +1,5 @@
-﻿
--- Exe 20
+﻿-- Exe 20
+
 CREATE VIEW vendasDoCliente AS (
 	SELECT 
 		vendas.cpf_cliente, 

@@ -1,6 +1,4 @@
-﻿
-
--- Exe 17
+﻿-- Exe 17
 
 CREATE or replace FUNCTION get_cliente_mais_atigo() RETURNS TABLE (
 nome VARCHAR (15),
@@ -15,6 +13,4 @@ RETURN $$;
 END;
 $$ LANGUAGE 'plpgsql'
 
-
 SELECT * FROM get_cliente_mais_atigo();
-
