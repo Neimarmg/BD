@@ -1,0 +1,12 @@
+﻿CREATE TABLE notaFiscal (
+	idNf SERIAL PRIMARY KEY,
+	nomero INTEGER,
+	dataNf DATE,
+	custo DECIMAL (10,2),
+	
+	CONSTRAINTS FOREIGN KEY (idMaterial) REFERENCES material (idMaterial)
+}
+
+INSERT INTO notaFiscal (nomero, dataNf,custo) VALUES (1,'10-02-2014',1,00),
+													 (21,'10-03-2014',100,00),
+													 (25,'01-04-2014',1,00);
