@@ -75,8 +75,6 @@ SELECT * FROM get_pessoas_alunos();
 
 --3) TIPO DE RETORNO  ==> RETURNS TABLE
 
-
-
 CREATE or replace FUNCTION blog_get_pessoas3() RETURNS TABLE (
 nome VARCHAR (80),
 descrição VARCHAR (80),
@@ -88,8 +86,6 @@ RETURN QUERY SELECT pessoa_fisica.NOME, tipo_pessoas.DESCRICAO, pessoa_fisica.se
 RETURN;
 END;
 $$ LANGUAGE 'plpgsql'
-
-
 SELECT * FROM blog_get_pessoas3();
 
 
