@@ -37,7 +37,7 @@ INSERT INTO notaFiscal (nomero, dataNf,custo) VALUES (1,'10-02-2014',1,00),
 													 
 CREATE TABLE intensNF (
 	idItensNf SERIAL PRIMARY KEY,
-	idMaterial INTEGER NOT NULL,
+	idProduto INTEGER NOT NULL,
 	qtd VARCHAR(200),
 	custo DECIMAL (10,2),
 	
@@ -51,26 +51,30 @@ INSERT INTO material (idMaterial, qtd, custo)VALUES
 (1,4,3);
 
 
---==========================<< TRIGGER >>==================================
+--==========================<< Trigger atualiza estoque >>==================================
 
 
 CREATE OR REPLACE FUNCTION edita_produtos() RETURNS TRIGGER AS $emp_audit$
     BEGIN
-        --
-        -- Cria uma linha na tabela emp_audit para refletir a operação
-        -- realizada na tabela emp. Utiliza a variável especial TG_OP
-        -- para descobrir a operação sendo realizada.
-        --
-        IF (TG_OP = 'DELETE') THEN
-            INSERT INTO emp_audit SELECT 'EXCLUSÃO', USER, DELETE(), OLD.*;
-            RETURN OLD;
-        ELSIF (TG_OP = 'UPDATE') THEN
-            INSERT INTO emp_audit SELECT 'ATUALIZAÇÃO', USER, now(), NEW.*;
+
+		IF (TG_OP = 'DELETE') THEN
+		
+           UPDATE produtos set quantidade = quantidade + OLD.qtd WHERE idProduto = OLD.idProduto; 
+          RETURN OLD;
+
+		ELSIF (TG_OP = 'UPDATE') THEN
+		
+			UPDATE produtos set quantidade = quantidade + OLD.qtd - new.qtd WHERE idProduto = OLD.idProduto;
             RETURN NEW;
-        ELSIF (TG_OP = 'INSERT') THEN
-            INSERT INTO emp_audit SELECT 'INSERÇÃO', USER, now(), NEW.*;
+   
+		ELSIF (TG_OP = 'INSERT') THEN
+		
+            UPDATE produtos set quantidade = quantidade - new.qtd WHERE idProduto = OLD.idProduto; 
             RETURN NEW;
-        END IF;
-        RETURN NULL; -- o resultado é ignorado uma vez que este é um gatilho AFTER
-    END;
+        
+		END IF;
+      
+		RETURN NULL;
+    
+	END;
     $emp_audit$ LANGUAGE plpgsql;
