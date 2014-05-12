@@ -23,5 +23,5 @@ ALTER TABLE produtos ALTER COLUMNS quantidade  TYPE NUMERIC (12,2);
 
 INSERT INTO produtos (nome, unidade, quantidade, preco_unitario, estoque_minimo, estoque_maximo) VALUES 
 ('leite', 'cx', 10, 1,20, 20, 500)
-('leite', 'cx', 10, 2,01, 10, 800)
-('leite', 'cx', 12, 1,15, 20, 100)
+('vinho', 'cx', 10, 2,01, 10, 800)
+('Ceva', 'cx', 12, 1,15, 20, 100)
