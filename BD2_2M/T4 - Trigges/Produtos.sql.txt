@@ -1,4 +1,4 @@
-CREATE TABLE produtos (
+﻿CREATE TABLE produtos (
 
 	idProduto serial PRIMARY KEY, 
 	nome VARCHAR(50) UNIQUE NOT NULL,
