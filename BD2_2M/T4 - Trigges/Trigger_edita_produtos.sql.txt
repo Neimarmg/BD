@@ -1,1 +1,76 @@
-﻿
+﻿CREATE TABLE produtos (
+
+	idProduto serial PRIMARY KEY, 
+	nome VARCHAR(50) UNIQUE NOT NULL,
+	unidade VARCHAR, 
+	quantidade INTEGER NOT NULL, 
+	preco_unitario DOUBLE PRECISION not null, 
+	estoque_minimo INTEGER,
+	estoque_maximo INTEGER UNIQUE
+	
+	CONSTRAINTS CHECK (estoque_minimo > 0)
+)
+
+SELECT * produtos;
+
+INSERT INTO produtos (nome, unidade, quantidade, preco_unitario, estoque_minimo, estoque_maximo) VALUES 
+('leite', 'cx', 10, 1,20, 20, 500)
+('vinho', 'cx', 10, 2,01, 10, 800)
+('Ceva', 'cx', 12, 1,15, 20, 100)
+
+
+CREATE TABLE notaFiscal (
+	idNf SERIAL PRIMARY KEY,
+	nomero INTEGER,
+	dataNf DATE,
+	custo DECIMAL (10,2),
+	
+	CONSTRAINTS FOREIGN KEY (idMaterial) REFERENCES material (idMaterial)
+)
+
+INSERT INTO notaFiscal (nomero, dataNf,custo) VALUES (1,'10-02-2014',1,00),
+													 (21,'10-03-2014',100,00),
+													 (22,'01-04-2014',1,00);
+													 (23,'01-04-2014',1,00);
+													 (24,'01-04-2014',1,00);
+													 
+													 
+CREATE TABLE intensNF (
+	idItensNf SERIAL PRIMARY KEY,
+	idMaterial INTEGER NOT NULL,
+	qtd VARCHAR(200),
+	custo DECIMAL (10,2),
+	
+	CONSTANT FOREIGN KEY (idMaterial) REFERENCES material (idMaterial)
+)
+
+INSERT INTO material (idMaterial, qtd, custo)VALUES
+(1,5,1);
+(1,4,5);
+(1,2,9);
+(1,4,3);
+
+
+--==========================<< TRIGGER >>==================================
+
+
+CREATE OR REPLACE FUNCTION edita_produtos() RETURNS TRIGGER AS $emp_audit$
+    BEGIN
+        --
+        -- Cria uma linha na tabela emp_audit para refletir a operação
+        -- realizada na tabela emp. Utiliza a variável especial TG_OP
+        -- para descobrir a operação sendo realizada.
+        --
+        IF (TG_OP = 'DELETE') THEN
+            INSERT INTO emp_audit SELECT 'EXCLUSÃO', USER, DELETE(), OLD.*;
+            RETURN OLD;
+        ELSIF (TG_OP = 'UPDATE') THEN
+            INSERT INTO emp_audit SELECT 'ATUALIZAÇÃO', USER, now(), NEW.*;
+            RETURN NEW;
+        ELSIF (TG_OP = 'INSERT') THEN
+            INSERT INTO emp_audit SELECT 'INSERÇÃO', USER, now(), NEW.*;
+            RETURN NEW;
+        END IF;
+        RETURN NULL; -- o resultado é ignorado uma vez que este é um gatilho AFTER
+    END;
+    $emp_audit$ LANGUAGE plpgsql;
