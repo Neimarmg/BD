@@ -1,0 +1,80 @@
+﻿CREATE TABLE produtos (
+
+	idProduto serial PRIMARY KEY, 
+	nome VARCHAR(50) UNIQUE NOT NULL,
+	unidade VARCHAR, 
+	quantidade INTEGER NOT NULL, 
+	preco_unitario DOUBLE PRECISION not null, 
+	estoque_minimo INTEGER,
+	estoque_maximo INTEGER UNIQUE
+	
+	CONSTRAINTS CHECK (estoque_minimo > 0)
+)
+
+SELECT * produtos;
+
+INSERT INTO produtos (nome, unidade, quantidade, preco_unitario, estoque_minimo, estoque_maximo) VALUES 
+('leite', 'cx', 10, 1,20, 20, 500)
+('vinho', 'cx', 10, 2,01, 10, 800)
+('Ceva', 'cx', 12, 1,15, 20, 100)
+
+
+CREATE TABLE notaFiscal (
+	idNf SERIAL PRIMARY KEY,
+	nomero INTEGER,
+	dataNf DATE,
+	custo DECIMAL (10,2),
+	
+	CONSTRAINTS FOREIGN KEY (idMaterial) REFERENCES material (idMaterial)
+)
+
+INSERT INTO notaFiscal (nomero, dataNf,custo) VALUES (1,'10-02-2014',1,00),
+													 (21,'10-03-2014',100,00),
+													 (22,'01-04-2014',1,00);
+													 (23,'01-04-2014',1,00);
+													 (24,'01-04-2014',1,00);
+													 
+													 
+CREATE TABLE intensNF (
+	idItensNf SERIAL PRIMARY KEY,
+	idProduto INTEGER NOT NULL,
+	qtd VARCHAR(200),
+	custo DECIMAL (10,2),
+	
+	CONSTANT FOREIGN KEY (idMaterial) REFERENCES material (idMaterial)
+)
+
+INSERT INTO material (idMaterial, qtd, custo)VALUES
+(1,5,1);
+(1,4,5);
+(1,2,9);
+(1,4,3);
+
+
+--==========================<< Trigger atualiza estoque >>==================================
+
+
+CREATE OR REPLACE FUNCTION edita_produtos() RETURNS TRIGGER AS $emp_audit$
+    BEGIN
+
+		IF (TG_OP = 'DELETE') THEN
+		
+           UPDATE produtos set quantidade = quantidade + OLD.qtd WHERE idProduto = OLD.idProduto; 
+          RETURN OLD;
+
+		ELSIF (TG_OP = 'UPDATE') THEN
+		
+			UPDATE produtos set quantidade = quantidade + OLD.qtd - new.qtd WHERE idProduto = OLD.idProduto;
+            RETURN NEW;
+   
+		ELSIF (TG_OP = 'INSERT') THEN
+		
+            UPDATE produtos set quantidade = quantidade - new.qtd WHERE idProduto = OLD.idProduto; 
+            RETURN NEW;
+        
+		END IF;
+      
+		RETURN NULL;
+    
+	END;
+    $emp_audit$ LANGUAGE plpgsql;
