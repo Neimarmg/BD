@@ -1,0 +1,4 @@
+﻿CREATE TABLE Disciplina (
+	idDisciplina serial PRIMARY KEY, 
+	
+)

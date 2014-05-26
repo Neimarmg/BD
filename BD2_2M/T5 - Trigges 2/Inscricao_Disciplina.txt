@@ -1,0 +1,4 @@
+﻿CREATE TABLE Inscricao_Disciplina (
+	idInscricaoDisciplina serial PRIMARY KEY, 
+	
+)

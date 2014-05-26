@@ -1,0 +1,4 @@
+﻿CREATE TABLE retiradas (
+	idRetiradas serial PRIMARY KEY, 
+	
+)

@@ -1,0 +1,4 @@
+﻿CREATE TABLE Aluno (
+	idAluno serial PRIMARY KEY, 
+	
+)

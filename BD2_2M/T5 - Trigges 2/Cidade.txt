@@ -1,0 +1,4 @@
+﻿CREATE TABLE Cidade (
+	idCidade serial PRIMARY KEY, 
+	
+)
