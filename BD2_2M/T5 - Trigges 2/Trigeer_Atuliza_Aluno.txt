@@ -1,1 +1,63 @@
-﻿
+﻿CREATE TABLE Curso (
+	CodCurso serial PRIMARY KEY, 
+	NomeCurso VARCHAR (50),
+    CdArea INTEGER NULL,
+    TotMensal NUMERIC NULL,
+    QtdAlunos INTEGER NULL,
+    QtdDisciplinas INTEGER NULL
+)
+
+CREATE TABLE Cidade (
+	Cdcidade serial PRIMARY KEY, 
+	Nomecidade INTEGER NULL,
+    UF VARCHAR (2) NULL,
+    QtdAlunos INTEGER NULL,
+    Livro VARCHAR NULL,
+    Cdlivro INTEGER NULL,
+    Titulo VARCHAR (50) NULL
+)
+
+CREATE TABLE Aluno (
+	CdAluno serial PRIMARY KEY, 
+	NomeAluno VARCHAR (50),
+    CdCurso INTEGER NULL,
+    VlrMensal NUMERIC NULL,
+    CdCidade INTEGER NULL,
+    QtdDisciplinas NUMERIC NULL,
+    QtdRetirada NUMERIC NULL
+)
+--==========================<< Trigger atualiza estoque >>==================================
+
+CREATE OR REPLACE FUNCTION atualiza_aluno() RETURNS TRIGGER AS $emp_audit$
+    BEGIN
+
+		IF (TG_OP = 'DELETE') THEN
+		
+           UPDATE Cidade set Qtdalunos = Qtdalunos + OLD.Qtdalunos WHERE Cidade.CdCidade = OLD.QCidade.CdCidade; 
+           UPDATE Curso set Qtdalunos = Qtdalunos + OLD.Qtdalunos WHERE Curso.CodCurso = OLD.Curso.CodCurso; 
+           UPDATE Curso set TotMensal = TotMensal + OLD.TotMensal WHERE Curso.CodCurso = OLD.Curso.CodCurso; 
+          
+          RETURN OLD;
+
+		ELSEIF (TG_OP = 'UPDATE') THEN
+		
+			UPDATE Cidade set Qtdalunos = Qtdalunos + OLD.Qtdalunos - new.Qtdalunos WHERE Cidade.CdCidade = OLD.Cidade.CdCidade;
+            UPDATE Curso set Qtdalunos = Qtdalunos + OLD.Qtdalunos - new.Qtdalunos WHERE Curso.CodCurso = OLD.Curso.CodCurso;
+            UPDATE Aluno set TotMensal = TotMensal + OLD.TotMensal - new.TotMensal WHERE Curso.CodCurso = OLD.Curso.CodCurso;
+          
+          RETURN NEW;
+   
+		ELSEIF (TG_OP = 'INSERT') THEN
+		
+            UPDATE Cidade set Qtdalunos = Qtdalunos - new.Qtdalunos WHERE Cidade.CdCidade = OLD.Cidade.CdCidade; 
+            UPDATE Curso set QtdAlunos = QtdAlunos - new.QtdAlunos WHERE Curso.CodCurso = OLD.Curso.CodCurso; 
+            UPDATE Curso set TotMensal = TotMensal - new.TotMensal WHERE Curso.CodCurso = OLD.Curso.CodCurso; 
+           
+           RETURN NEW;
+        
+		END IF;
+      
+		RETURN NULL;
+    
+	END;
+    $emp_audit$ LANGUAGE plpgsql;

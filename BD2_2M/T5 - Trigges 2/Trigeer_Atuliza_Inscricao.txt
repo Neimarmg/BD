@@ -7,10 +7,13 @@
     QtdDisciplinas NUMERIC NULL,
     QtdRetirada NUMERIC NULL
 )
+
 --==========================<< Trigger atualiza estoque >>==================================
-a)Cidade.QtdAlunos
-b)Curso.Qtdalunos
-c)curso.TotMensal
+
+2. Criação de uma trigger para impedir que um aluno retire mais que 3 livros, deve atualizar a cada movimentação de retirada / devolução.
+
+a)aluno.Qtdretirada
+
 
 
 CREATE OR REPLACE FUNCTION atualiza_aluno() RETURNS TRIGGER AS $emp_audit$
@@ -18,20 +21,21 @@ CREATE OR REPLACE FUNCTION atualiza_aluno() RETURNS TRIGGER AS $emp_audit$
 
 		IF (TG_OP = 'DELETE') THEN
 		
-           UPDATE Aluno set Qtdalunos = Qtdalunos + OLD.Qtdalunos WHERE Qtdalunos = OLD.Qtdalunos; 
-           UPDATE Aluno set Curso = Qtdalunos + OLD.Qtdalunos WHERE Qtdalunos = OLD.Qtdalunos; 
-           UPDATE Aluno set Curso = Cidade + OLD.Cidade WHERE Cidade = OLD.Cidade; 
+           UPDATE Aluno set Qtdretirada = Qtdretirada + OLD.Qtdretirada WHERE Aluno.CdAluno = OLD.Aluno.CdAluno; 
+                   
           RETURN OLD;
 
-		ELSIF (TG_OP = 'UPDATE') THEN
+		ELSEIF (TG_OP = 'UPDATE') THEN
 		
-			UPDATE Aluno set CdAluno = CdAluno + OLD.CdAluno - new.CdAluno WHERE CdAluno = OLD.CdAluno;
-            RETURN NEW;
+			UPDATE Aluno set Qtdalunos = Qtdalunos + OLD.Qtdalunos - new.Qtdalunos WHERE Cidade.CdCidade = OLD.Cidade.CdCidade;
+                     
+          RETURN NEW;
    
-		ELSIF (TG_OP = 'INSERT') THEN
+		ELSEIF (TG_OP = 'INSERT') THEN
 		
-            UPDATE Aluno set CdAluno = CdAluno - new.CdAluno WHERE CdAluno = OLD.CdAluno; 
-            RETURN NEW;
+            UPDATE Aluno set Qtdalunos = Qtdalunos - new.Qtdalunos WHERE Cidade.CdCidade = OLD.Cidade.CdCidade; 
+               
+           RETURN NEW;
         
 		END IF;
       
