@@ -1,4 +1,6 @@
 ﻿CREATE TABLE Livros (
-	idLivros serial PRIMARY KEY, 
-	
+	CdLivro serial PRIMARY KEY, 
+	titulo VARCHAR (50) NULL,
+    QtdRetiradasTotal NUMERIC NULL,
+    QtdDisponivel NUMERIC NULL,
 )

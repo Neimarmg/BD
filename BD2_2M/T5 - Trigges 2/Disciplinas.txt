@@ -1,4 +1,6 @@
 ﻿CREATE TABLE Disciplina (
-	idDisciplina serial PRIMARY KEY, 
-	
+	Cddisciplina serial PRIMARY KEY, 
+	NomeDisciplina VARCHAR (50) NULL,
+    CdCurso INTEGER NULL,
+    QtdAlunos NUMERIC NULL
 )

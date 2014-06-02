@@ -1,4 +1,9 @@
 ﻿CREATE TABLE Aluno (
-	idAluno serial PRIMARY KEY, 
-	
+	CdAluno serial PRIMARY KEY, 
+	NomeAluno VARCHAR (50),
+    CdCurso INTEGER NULL,
+    VlrMensal NUMERIC NULL,
+    CdCidade INTEGER NULL,
+    QtdDisciplinas NUMERIC NULL,
+    QtdRetirada NUMERIC NULL
 )

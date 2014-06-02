@@ -1,4 +1,4 @@
 ﻿CREATE TABLE Area (
-	idArea serial PRIMARY KEY, 
-	
+	idCdarea serial PRIMARY KEY, 
+	nomeArea VARCHAR (50), 	
 )

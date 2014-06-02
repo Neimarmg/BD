@@ -1,1 +1,41 @@
-﻿
+﻿CREATE TABLE Aluno (
+	CdAluno serial PRIMARY KEY, 
+	NomeAluno VARCHAR (50),
+    CdCurso INTEGER NULL,
+    VlrMensal NUMERIC NULL,
+    CdCidade INTEGER NULL,
+    QtdDisciplinas NUMERIC NULL,
+    QtdRetirada NUMERIC NULL
+)
+--==========================<< Trigger atualiza estoque >>==================================
+a)Cidade.QtdAlunos
+b)Curso.Qtdalunos
+c)curso.TotMensal
+
+
+CREATE OR REPLACE FUNCTION atualiza_aluno() RETURNS TRIGGER AS $emp_audit$
+    BEGIN
+
+		IF (TG_OP = 'DELETE') THEN
+		
+           UPDATE Aluno set Qtdalunos = Qtdalunos + OLD.Qtdalunos WHERE Qtdalunos = OLD.Qtdalunos; 
+           UPDATE Aluno set Curso = Qtdalunos + OLD.Qtdalunos WHERE Qtdalunos = OLD.Qtdalunos; 
+           UPDATE Aluno set Curso = Cidade + OLD.Cidade WHERE Cidade = OLD.Cidade; 
+          RETURN OLD;
+
+		ELSIF (TG_OP = 'UPDATE') THEN
+		
+			UPDATE Aluno set CdAluno = CdAluno + OLD.CdAluno - new.CdAluno WHERE CdAluno = OLD.CdAluno;
+            RETURN NEW;
+   
+		ELSIF (TG_OP = 'INSERT') THEN
+		
+            UPDATE Aluno set CdAluno = CdAluno - new.CdAluno WHERE CdAluno = OLD.CdAluno; 
+            RETURN NEW;
+        
+		END IF;
+      
+		RETURN NULL;
+    
+	END;
+    $emp_audit$ LANGUAGE plpgsql;

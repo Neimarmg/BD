@@ -1,4 +1,8 @@
 ﻿CREATE TABLE Curso (
 	idCurso serial PRIMARY KEY, 
-	
+	NomeCurso VARCHAR (50),
+    CdArea INTEGER NULL,
+    TotMensal NUMERIC NULL,
+    QtdAlunos INTEGER NULL,
+    QtdDisciplinas INTEGER NULL
 )

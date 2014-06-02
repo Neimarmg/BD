@@ -1,4 +1,9 @@
 ﻿CREATE TABLE Cidade (
-	idCidade serial PRIMARY KEY, 
-	
+	Cdcidade serial PRIMARY KEY, 
+	Nomecidade INTEGER NULL,
+    UF VARCHAR (2) NULL,
+    QtdAlunos INTEGER NULL,
+    Livro VARCHAR NULL,
+    Cdlivro INTEGER NULL,
+    Titulo VARCHAR (50) NULL
 )

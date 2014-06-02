@@ -1,4 +1,7 @@
 ﻿CREATE TABLE retiradas (
-	idRetiradas serial PRIMARY KEY, 
-	
+	CdRetirada serial PRIMARY KEY, 
+	CdLivro INTEGER NULL,
+    CdAluno INTEGER NULL,
+    DtRetirada NUMERIC NULL,
+    DtDevolucao NUMERIC NULL,
 )

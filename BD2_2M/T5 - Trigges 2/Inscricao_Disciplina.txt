@@ -1,4 +1,4 @@
 ﻿CREATE TABLE Inscricao_Disciplina (
-	idInscricaoDisciplina serial PRIMARY KEY, 
-	
-)
+	CdDisciplina serial PRIMARY KEY, 
+	CdAluno INTEGER , 
+ )
