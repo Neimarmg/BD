@@ -1,1 +1,73 @@
-﻿
+﻿CREATE TABLE retiradas (
+	CdRetirada serial PRIMARY KEY, 
+	CdLivro INTEGER NULL,
+    CdAluno INTEGER NULL,
+    DtRetirada NUMERIC NULL,
+    DtDevolucao NUMERIC NULL,
+)
+
+CREATE TABLE Livros (
+	CdLivro serial PRIMARY KEY, 
+	titulo VARCHAR (50) NULL,
+    QtdRetiradasTotal NUMERIC NULL,
+    QtdDisponivel NUMERIC NULL,
+)
+
+--==========================<< Trigger atualiza estoque >>==================================
+
+4.	Criação de uma triger que a cada Movimentação Retirada NÃO deixe retirar o Livro se a quantidade disponível for ZERO e  deverá  atualize : 
+a)	Livro.QtdRetiradasTotal
+b)	Livro.QtdDisponível
+
+
+--Função de contagem de livros locados anterioemente
+CREATE OR REPLACE FUNCTION get_locacoes() RETURNS TABLE (
+TotalRetiradas NUMERIC,
+TotalDisponiveis NUMERIC, AS $$
+
+	BEGIN
+		SELECT INTO get_Contalocacoes
+			COUNT(retiradas.CdLivro), 
+			COUNT(retiradas.CdLivro) 		
+			
+			FROM retiradas
+			WHERE aluno.CdAluno = $1 and retiradas.CdAluno;
+		RETURN get_Contalocacoes;
+	END;
+	
+$$ LANGUAGE 'plpgsql';
+
+
+
+CREATE OR REPLACE FUNCTION atualiza_aluno() RETURNS TRIGGER AS $emp_audit$
+    BEGIN
+		if (TotalDisponiveis == 0)
+		
+			IF (TG_OP = 'DELETE') THEN
+			
+			   UPDATE retiradas set DtRetirada = DtRetirada + OLD.DtRetirada WHERE Aluno.CdAluno = OLD.Aluno.CdAluno; 
+					   
+			  RETURN OLD;
+
+			ELSEIF (TG_OP = 'UPDATE') THEN
+			
+				UPDATE 
+				retiradas set DtRetirada = DtRetirada + OLD.DtRetirada - new.DtRetirada WHERE Aluno.CdAluno = OLD.Cidade.Aluno.CdAluno;
+						 
+			  RETURN NEW;
+	   
+			ELSEIF (TG_OP = 'INSERT') THEN
+			
+				UPDATE retiradas set DtRetirada = DtRetirada - new.DtRetirada WHERE Aluno.CdAluno = OLD.Aluno.CdAluno; 
+				   
+			   RETURN NEW;
+			
+			END IF;
+		ELSE
+			RETURN 3 - TotalDisponiveis;
+		END IF
+		
+		RETURN NULL;
+    
+	END;
+    $emp_audit$ LANGUAGE plpgsql;

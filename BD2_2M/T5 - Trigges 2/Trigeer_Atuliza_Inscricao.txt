@@ -1,44 +1,31 @@
-﻿CREATE TABLE Aluno (
-	CdAluno serial PRIMARY KEY, 
-	NomeAluno VARCHAR (50),
-    CdCurso INTEGER NULL,
-    VlrMensal NUMERIC NULL,
-    CdCidade INTEGER NULL,
-    QtdDisciplinas NUMERIC NULL,
-    QtdRetirada NUMERIC NULL
-)
+﻿CREATE TABLE Inscricao_Disciplina (
+	CdDisciplina serial PRIMARY KEY, 
+	CdAluno INTEGER , 
+ )
 
---==========================<< Trigger atualiza estoque >>==================================
-
-2. Criação de uma trigger para impedir que um aluno retire mais que 3 livros, deve atualizar a cada movimentação de retirada / devolução.
-
-a)aluno.Qtdretirada
-
-
+--==========================<< Trigger atualiza >>==================================
 
 CREATE OR REPLACE FUNCTION atualiza_aluno() RETURNS TRIGGER AS $emp_audit$
     BEGIN
+			IF (TG_OP = 'DELETE') THEN
+			
+			   UPDATE Inscricao_Disciplina set CdAluno = CdAluno + OLD.CdAluno WHERE Inscricao_Disciplina.CdAluno = OLD.Inscricao_Disciplina.CdAluno; 
+					   
+			  RETURN OLD;
 
-		IF (TG_OP = 'DELETE') THEN
-		
-           UPDATE Aluno set Qtdretirada = Qtdretirada + OLD.Qtdretirada WHERE Aluno.CdAluno = OLD.Aluno.CdAluno; 
-                   
-          RETURN OLD;
-
-		ELSEIF (TG_OP = 'UPDATE') THEN
-		
-			UPDATE Aluno set Qtdalunos = Qtdalunos + OLD.Qtdalunos - new.Qtdalunos WHERE Cidade.CdCidade = OLD.Cidade.CdCidade;
-                     
-          RETURN NEW;
-   
-		ELSEIF (TG_OP = 'INSERT') THEN
-		
-            UPDATE Aluno set Qtdalunos = Qtdalunos - new.Qtdalunos WHERE Cidade.CdCidade = OLD.Cidade.CdCidade; 
-               
-           RETURN NEW;
-        
-		END IF;
-      
+			ELSEIF (TG_OP = 'UPDATE') THEN
+			
+				UPDATE Inscricao_Disciplina set CdAluno = CdAluno + OLD.CdAluno - new.CdAluno WHERE Inscricao_Disciplina.CdAluno = OLD.Inscricao_Disciplina.CdAluno;
+						 
+			  RETURN NEW;
+	   
+			ELSEIF (TG_OP = 'INSERT') THEN
+			
+				UPDATE Inscricao_Disciplina set CdAluno = CdAluno - new.CdAluno WHERE Inscricao_Disciplina.CdAluno = OLD.Inscricao_Disciplina.CdAluno; 
+				   
+			   RETURN NEW;
+			
+			END IF;
 		RETURN NULL;
     
 	END;
